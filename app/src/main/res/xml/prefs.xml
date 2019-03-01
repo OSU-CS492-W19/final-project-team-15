@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:key="genre_key"
+        android:title="Genre"
+        android:summary="%s"
+        android:dialogTitle="Genre"
+        android:defaultValue="Rock"/>
+
+    <!--<EditTextPreference-->
+        <!--android:key="@string/pref_rounds_key"-->
+        <!--android:title="@string/pref_rounds_title"/>-->
+
+</PreferenceScreen>
