@@ -1,3 +1,6 @@
+# Client Secret File DO NOT COMMIT THIS FILE
+secrets.xml
+
 # Built application files
 *.apk
 *.ap_
