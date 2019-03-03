@@ -5,15 +5,17 @@ import android.os.Bundle;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.util.Log;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
-        CharSequence[] entries = { "One", "Two", "Three" };
-        CharSequence[] entryValues = { "1", "2", "3" };
-        ListPreference lp = (ListPreference)findPreference("genre-key");
-        lp.setEntries(entries);
-        lp.setEntryValues(entryValues);
+        addPreferencesFromResource(R.xml.prefs);
+        ListPreference lp = (ListPreference) findPreference("genre_key");
+        Log.d(this.getClass().toString(), lp.toString());
+        lp.setEntries(new String[]{"one","two","three"});
+        lp.setEntryValues(new String[]{"0","1","2"});
+        lp.setValueIndex(0);
     }
 
     @Override
