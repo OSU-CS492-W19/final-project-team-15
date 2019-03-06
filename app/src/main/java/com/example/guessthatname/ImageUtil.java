@@ -7,11 +7,10 @@ import com.bumptech.glide.Glide;
 
 public class ImageUtil {
 
-    public static Void displayImageFromLink(Context context, ImageView imageView, String url){
+    public static void displayImageFromLink(Context context, ImageView imageView, String url){
         Glide.with(context)
                 .load(url)
                 .into(imageView);
-        return null;
     }
 
 }
