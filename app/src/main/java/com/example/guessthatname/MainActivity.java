@@ -14,7 +14,8 @@ private int score;
 private TextView mScoreTV;
 private ImageView mAlbumArtIV;
 
-private final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
+private static final String SCORE_KEY = "currentScore";
+private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +23,17 @@ private final String testLink = "https://www.sageaudio.com/blog/wp-content/uploa
         setContentView(R.layout.activity_main);
 
         mAlbumArtIV = findViewById(R.id.iv_album_art);
-        ImageUtil.displayImageFromLink(this, mAlbumArtIV, testLink);
+        ImageUtil.displayImageFromLink(mAlbumArtIV, testLink);
         mAlbumArtIV.setVisibility(View.VISIBLE);
 
-        score = 0;
+        if(savedInstanceState != null){
+            if(savedInstanceState.containsKey(SCORE_KEY)){
+                score = savedInstanceState.getInt(SCORE_KEY);
+            } else {
+                score = 0;
+            }
+        }
+        score+=2;
         mScoreTV = findViewById(R.id.tv_score);
         mScoreTV.setText(getString(R.string.score_pre)+" "+score);
 
@@ -33,6 +41,14 @@ private final String testLink = "https://www.sageaudio.com/blog/wp-content/uploa
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             typeface = getResources().getFont(arcade_classic);
             mScoreTV.setTypeface(typeface);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(score > 0){
+            outState.putInt(SCORE_KEY, score);
         }
     }
 

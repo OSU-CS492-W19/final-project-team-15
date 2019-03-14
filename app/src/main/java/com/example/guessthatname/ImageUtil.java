@@ -7,8 +7,8 @@ import com.bumptech.glide.Glide;
 
 public class ImageUtil {
 
-    public static void displayImageFromLink(Context context, ImageView imageView, String url){
-        Glide.with(context)
+    public static void displayImageFromLink(ImageView imageView, String url){
+        Glide.with(imageView)
                 .load(url)
                 .into(imageView);
     }
