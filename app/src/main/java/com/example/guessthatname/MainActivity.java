@@ -14,14 +14,14 @@ public class MainActivity extends AppCompatActivity {
 private int score;
 
 private TextView mScoreTV;
-private Button[] mButtons;
+private Choice[] mChoices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initButtons();
+        initChoices();
 
         score = 0;
         mScoreTV = findViewById(R.id.tv_score);
@@ -38,19 +38,18 @@ private Button[] mButtons;
         mScoreTV.setText(getString(R.string.score_pre)+" "+score);
     }
 
-    private void initButtons() {
+    private void initChoices() {
         // Get buttons
-        mButtons = new Button[4];
-        mButtons[0] = findViewById(R.id.button_0);
-        mButtons[1] = findViewById(R.id.button_1);
-        mButtons[2] = findViewById(R.id.button_2);
-        mButtons[3] = findViewById(R.id.button_3);
+        mChoices = new Choice[4];
+        mChoices[0] = new Choice((Button)findViewById(R.id.button_0), false);
+        mChoices[1] = new Choice((Button)findViewById(R.id.button_1), false);
+        mChoices[2] = new Choice((Button)findViewById(R.id.button_2), false);
+        mChoices[3] = new Choice((Button)findViewById(R.id.button_3), false);
 
         // TODO: Send the above statements into the for loop below
 
         for(int i = 0; i < 4; i++) {
-            updateButtonText(i, "Empty Button");
-            mButtons[i].setOnClickListener(new View.OnClickListener() {
+            mChoices[i].getButton().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View button) {
                     Log.d("SpotifyMain", "Button clicked");
@@ -61,8 +60,6 @@ private Button[] mButtons;
                 }
             });
         }
-
-        // setButtonsVisibility(View.INVISIBLE);
     }
 
     private void displayResults(boolean correct) {
@@ -70,25 +67,6 @@ private Button[] mButtons;
             // TODO: Success view
         } else {
             // TODO: Failure view
-        }
-    }
-
-    /**
-     * Updates button text to reflect song name passed in
-     * @param id
-     * @param songName
-     */
-    private void updateButtonText(int id, String songName) {
-        mButtons[id].setText(songName);
-    }
-
-    /**
-     * Sets visibility of all buttons to passed in value
-     * @param visibility
-     */
-    private void setButtonsVisibility(int visibility) {
-        for(int i = 0; i < mButtons.length; i++) {
-            mButtons[i].setVisibility(visibility);
         }
     }
 }
