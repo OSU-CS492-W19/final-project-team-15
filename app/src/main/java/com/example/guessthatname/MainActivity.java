@@ -6,10 +6,13 @@ import android.nfc.Tag;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.List;
 
 import static com.example.guessthatname.R.font.arcade_classic;
 
@@ -56,6 +59,7 @@ private Choice[] mChoices;
         for(int i = 0; i < 4; i++) {
             //Add a touch listener to each of the buttons
             Button b = mChoices[i].getButton();
+            b.setTag(i);
             b.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -73,6 +77,7 @@ private Choice[] mChoices;
                         } else if(action == MotionEvent.ACTION_UP) {
                             //Restore original button opacity
                             ((ColorDrawable)v.getBackground()).setAlpha(255);
+                            displayResults(mChoices[(Integer)v.getTag()].getCorrect());
                         }
                     } else {
                         //Restore original button opacity
@@ -86,7 +91,21 @@ private Choice[] mChoices;
         }
     }
 
+    /**
+     * Gets a list of 4 songs and an associated boolean value indicating
+     * correctness of the song choice.
+     * Updates the button UI elements from argument data
+     * @param songs
+     */
+    public void updateChoices(Pair<String, Boolean> songs[]) {
+        for(int i = 0; i < 4; i++) {
+            mChoices[i].updateText(songs[i].first);
+            mChoices[i].setCorrectness(songs[i].second);
+        }
+    }
+
     private void displayResults(boolean correct) {
+        Log.d(TAG, "Correct song? : " + correct);
         if(correct) {
             // TODO: Success view
         } else {
