@@ -13,10 +13,10 @@
         android:layout_height="wrap_content"
         android:text="@string/score_pre"
         android:textColor="@color/colorAccent"
-<<<<<<< HEAD
-        tools:ignore="MissingConstraints"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:textSize="40sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/iv_album_art"
@@ -29,13 +29,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias=".2"/>
-
-=======
-        android:textSize="40sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
->>>>>>> master
 
     <Button
         android:id="@+id/button-0"
