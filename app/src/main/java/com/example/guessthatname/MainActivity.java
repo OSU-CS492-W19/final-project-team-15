@@ -33,7 +33,6 @@ private static final String testLink = "https://www.sageaudio.com/blog/wp-conten
                 score = 0;
             }
         }
-        score+=2;
         mScoreTV = findViewById(R.id.tv_score);
         mScoreTV.setText(getString(R.string.score_pre)+" "+score);
 
