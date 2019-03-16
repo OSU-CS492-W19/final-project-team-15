@@ -2,7 +2,8 @@ package com.example.guessthatname;
 
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.nfc.Tag;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,7 +13,6 @@ import android.util.Pair;
 import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.TextView;
-import java.util.List;
 
 import static com.example.guessthatname.R.font.arcade_classic;
 
@@ -20,12 +20,15 @@ public class MainActivity extends AppCompatActivity {
 private int score;
 
 private static final String TAG = "GuessThatName";
+private static final String DIALOG_TAG = "dialog";
 private static final String SCORE_KEY = "currentScore";
 private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
 
 private TextView mScoreTV;
 private ImageView mAlbumArtIV;
 private Choice[] mChoices;
+private FragmentManager mFragmentManager;
+private DialogFragment mDialog;
 
 
     @Override
@@ -34,6 +37,13 @@ private Choice[] mChoices;
         setContentView(R.layout.activity_main);
 
         mAlbumArtIV = findViewById(R.id.iv_album_art);
+
+        Bundle args = new Bundle();
+        args.putBoolean(getString(R.string.answer_arg_key),true);
+        mFragmentManager = getSupportFragmentManager();
+        mDialog = new AnswerDialogFragment();
+        mDialog.setArguments(args);
+        mDialog.show(mFragmentManager, DIALOG_TAG);
 
 
         ImageUtil.displayImageFromLink(mAlbumArtIV, testLink);

@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">GuessThatName</string>
     <string name="score_pre">Score:</string>
+    <string name="correct_dialog">Correct</string>
+    <string name="dialog_button_text">close</string>
+    <string name="incorrect_dialog">wrong</string>
+    <string name="answer_arg_key">isCorrect</string>
 </resources>
