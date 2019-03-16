@@ -98,15 +98,15 @@ private Choice[] mChoices;
                     if((0 < x && x < width) && (0 < y && y < height)) {
                         if(action == MotionEvent.ACTION_DOWN) {
                             //Fade the button when pressed
-                            ((ColorDrawable)v.getBackground()).setAlpha(100);
+                            v.getBackground().setAlpha(100);
                         } else if(action == MotionEvent.ACTION_UP) {
                             //Restore original button opacity
-                            ((ColorDrawable)v.getBackground()).setAlpha(255);
+                            v.getBackground().setAlpha(255);
                             displayResults(mChoices[(Integer)v.getTag()].getCorrect());
                         }
                     } else {
                         //Restore original button opacity
-                        ((ColorDrawable)v.getBackground()).setAlpha(255);
+                        v.getBackground().setAlpha(255);
                     }
 
                     return true;
