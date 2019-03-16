@@ -1,86 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/tv_score"
-        android:padding="8dp"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/score_pre"
-        android:textColor="@color/colorAccent"
-        android:textSize="40sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
+        android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/iv_album_art"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:padding="8dp"
-        android:visibility="invisible"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias=".2"/>
+        <TextView
+            android:id="@+id/tv_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/score_pre"
+            android:textColor="@color/colorAccent"
+            android:textSize="40sp" />
 
-    <Button
-        android:id="@+id/button-0"
-        android:layout_width="100pt"
-        android:layout_height="25pt"
-        android:text=""
-        android:background="#F59B23"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.65" />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/button-1"
-        android:layout_width="100pt"
-        android:layout_height="25pt"
-        android:text=""
-        android:background="#FF4632"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.75" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/button-2"
-        android:layout_width="100pt"
-        android:layout_height="25pt"
-        android:text=""
-        android:background="#AF2896"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.85" />
+        <ImageView
+            android:id="@+id/iv_album_art"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_margin="20dp"
+            android:layout_gravity="center_horizontal"
+            android:visibility="invisible" />
 
-    <Button
-        android:id="@+id/button-3"
-        android:layout_width="100pt"
-        android:layout_height="25pt"
-        android:text=""
-        android:background="#509BF5"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.95" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
+            <Button
+                android:id="@+id/button-0"
+                android:layout_width="100pt"
+                android:layout_height="25pt"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:background="#F59B23"
+                android:text="" />
+
+            <Button
+                android:id="@+id/button-1"
+                android:layout_width="100pt"
+                android:layout_height="25pt"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="#FF4632"
+                android:text="" />
+
+            <Button
+                android:id="@+id/button-2"
+                android:layout_width="100pt"
+                android:layout_height="25pt"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="#AF2896"
+                android:text="" />
+
+            <Button
+                android:id="@+id/button-3"
+                android:layout_width="100pt"
+                android:layout_height="25pt"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:background="#509BF5"
+                android:text="" />
+        </LinearLayout>
+    </FrameLayout>
 
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
