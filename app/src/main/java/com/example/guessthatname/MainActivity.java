@@ -7,14 +7,18 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.view.Menu;
 import android.view.MenuItem;
+import static com.example.guessthatname.R.font.arcade_classic;
+import java.util.List;
+
 import static com.example.guessthatname.R.font.arcade_classic;
 
 import com.example.guessthatname.utils.SpotifyUtil;
@@ -23,9 +27,12 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences mPreferences;
     private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
     private int score;
-    private TextView mScoreTV;
     private Choice[] mChoices;
+    private TextView mScoreTV;
+    private ImageView mAlbumArtIV;
     private static final String TAG = "GuessThatName";
+    private static final String SCORE_KEY = "currentScore";
+    private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +47,23 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
+        mAlbumArtIV = findViewById(R.id.iv_album_art);
+
+        ImageUtil.displayImageFromLink(mAlbumArtIV, testLink);
+        mAlbumArtIV.setVisibility(View.VISIBLE);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(SCORE_KEY)) {
+                score = savedInstanceState.getInt(SCORE_KEY);
+            } else {
+                score = 0;
+            }
+        }
         initChoices();
 
-        score = 0;
         mScoreTV = findViewById(R.id.tv_score);
         mScoreTV.setText(getString(R.string.score_pre) + " " + score);
+
         Typeface typeface = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             typeface = getResources().getFont(arcade_classic);
@@ -67,6 +86,13 @@ public class MainActivity extends AppCompatActivity {
             return true;
         default:
             return super.onOptionsItemSelected(item);
+        }
+    }
+
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (score > 0) {
+            outState.putInt(SCORE_KEY, score);
         }
     }
 
