@@ -25,7 +25,7 @@ private static final String SCORE_KEY = "currentScore";
 private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
 
 private TextView mScoreTV;
-private ImageView mPlaceholderIV;
+private TextView mPlaceholderTV;
 private Choice[] mChoices;
 private FragmentManager mFragmentManager;
 
@@ -34,11 +34,11 @@ private FragmentManager mFragmentManager;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mPlaceholderIV = findViewById(R.id.iv_album_art);
+
         mFragmentManager = getSupportFragmentManager();
 
-        ImageUtil.displayPlaceholderImage(mPlaceholderIV);
-        mPlaceholderIV.setVisibility(View.VISIBLE);
+        mPlaceholderTV = findViewById(R.id.tv_album_art_placeholder);
+        mPlaceholderTV.setText("?");
 
         if(savedInstanceState != null){
             if(savedInstanceState.containsKey(SCORE_KEY)){
