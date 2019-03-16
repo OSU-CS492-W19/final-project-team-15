@@ -17,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import static com.example.guessthatname.R.font.arcade_classic;
 
+import com.example.guessthatname.utils.SpotifyUtil;
+
 public class MainActivity extends AppCompatActivity {
     private SharedPreferences mPreferences;
     private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;

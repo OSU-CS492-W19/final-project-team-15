@@ -7,13 +7,21 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.util.Log;
 import android.util.Pair;
 
+import com.example.guessthatname.utils.SpotifyUtil;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsFragment extends PreferenceFragmentCompat
-        implements SharedPreferences.OnSharedPreferenceChangeListener, SpotifyUtil.o {
-    private CategoryList categories;
+        implements SharedPreferences.OnSharedPreferenceChangeListener, SpotifyUtil.GetListCategories.AsyncCallback {
+
+    private SpotifyUtil.CategoryList mCategories;
+
+    public void onCategoryListLoadFinished(SpotifyUtil.CategoryList categoryList){
+        mCategories = categoryList;
+        Log.d("Settings Fragment", categoryList.toString());
+    }
 
 
     @Override
@@ -21,6 +29,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
         addPreferencesFromResource(R.xml.prefs);
         ListPreference lp = (ListPreference) findPreference("genre_key");
         Log.d(this.getClass().toString(), lp.toString());
+        new SpotifyUtil.GetListCategories(this).execute();
         Pair<ArrayList<String>, ArrayList<String>> Entries = getCategories();
         lp.setEntries(Entries.first.toArray(new String[0]));
         lp.setEntryValues(Entries.second.toArray(new String[0]));
@@ -54,4 +63,6 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
         return categories;
     }
+
+
 }
