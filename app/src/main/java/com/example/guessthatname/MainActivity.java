@@ -25,29 +25,20 @@ private static final String SCORE_KEY = "currentScore";
 private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
 
 private TextView mScoreTV;
-private ImageView mAlbumArtIV;
+private ImageView mPlaceholderIV;
 private Choice[] mChoices;
 private FragmentManager mFragmentManager;
-private DialogFragment mDialog;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mAlbumArtIV = findViewById(R.id.iv_album_art);
-
-        Bundle args = new Bundle();
-        args.putBoolean(getString(R.string.answer_arg_key),true);
+        mPlaceholderIV = findViewById(R.id.iv_album_art);
         mFragmentManager = getSupportFragmentManager();
-        mDialog = new AnswerDialogFragment();
-        mDialog.setArguments(args);
-        mDialog.show(mFragmentManager, DIALOG_TAG);
 
-
-        ImageUtil.displayImageFromLink(mAlbumArtIV, testLink);
-        mAlbumArtIV.setVisibility(View.VISIBLE);
+        ImageUtil.displayPlaceholderImage(mPlaceholderIV);
+        mPlaceholderIV.setVisibility(View.VISIBLE);
 
         if(savedInstanceState != null){
             if(savedInstanceState.containsKey(SCORE_KEY)){
@@ -141,10 +132,32 @@ private DialogFragment mDialog;
 
     private void displayResults(boolean correct) {
         Log.d(TAG, "Correct song? : " + correct);
+        Bundle args = new Bundle();
         if(correct) {
-            // TODO: Success view
+            //answer is correct
+            args.putBoolean(getString(R.string.answer_arg_key),true);
+            //correct song name
+            args.putString(getString(R.string.songname_arg_key),"Darude - Sandstorm");
+            //spotify url for song
+            args.putString(getString(R.string.song_url_arg_key),"https://www.youtube.com/watch?v=c-ydGUHUDj8");
+            //url for album art
+            args.putString(getString(R.string.art_arg_url), testLink);
+
+            //create dialog fragment
+            DialogFragment mDialog = new AnswerDialogFragment();
+            //pass arguments
+            mDialog.setArguments(args);
+            //display modal
+            mDialog.show(mFragmentManager, DIALOG_TAG);
         } else {
-            // TODO: Failure view
+            args.putBoolean(getString(R.string.answer_arg_key),false);
+            args.putString(getString(R.string.songname_arg_key),"Darude - Sandstorm");
+            args.putString(getString(R.string.song_url_arg_key),"https://www.youtube.com/watch?v=c-ydGUHUDj8");
+            args.putString(getString(R.string.art_arg_url), testLink);
+
+            DialogFragment mDialog = new AnswerDialogFragment();
+            mDialog.setArguments(args);
+            mDialog.show(mFragmentManager, DIALOG_TAG);
         }
     }
 }

@@ -3,8 +3,16 @@ package com.example.guessthatname;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.net.URI;
 
 public class AnswerDialogFragment extends DialogFragment {
 
@@ -17,22 +25,49 @@ public class AnswerDialogFragment extends DialogFragment {
         if(args != null && args.containsKey(getString(R.string.answer_arg_key))) {
             isCorrect = args.getBoolean(getString(R.string.answer_arg_key));
         }
+
         //build dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_fragment,null);
+        TextView messagetv = view.findViewById(R.id.dialog_message);
+        TextView songnametv = view.findViewById(R.id.song_name);
+        ImageView albumartiv = view.findViewById(R.id.iv_album_art);
+
+        final String url = args.getString(getString(R.string.song_url_arg_key));
         //set correctness message
         if(isCorrect) {
-            builder.setMessage(R.string.correct_dialog);
+            messagetv.setText(getString(R.string.correct_dialog));
         } else{
-            builder.setMessage(R.string.incorrect_dialog);
+            messagetv.setText(R.string.incorrect_dialog);
         }
+        //display album art
+        if(args.containsKey(getString(R.string.art_arg_url))){
+            ImageUtil.displayImageFromLink(albumartiv,args.getString(getString(R.string.art_arg_url)));
+        }
+        //set correct answer message
+        if(args.containsKey(getString(R.string.songname_arg_key))){
+            songnametv.setText(getString(R.string.dialog_correct_song_message,args.getString(getString(R.string.songname_arg_key))));
+        }
+        builder.setView(view);
         //add close button
-        builder.setPositiveButton(R.string.dialog_button_text, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.dialog_button_text, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dismiss();
             }
         });
-        builder.setView(R.layout.dialog_fragment);
+        //add listen on spotify buttton
+        builder.setPositiveButton(getString(R.string.listen_spot), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Uri uri = Uri.parse(url);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+
         return builder.create();
     }
 }

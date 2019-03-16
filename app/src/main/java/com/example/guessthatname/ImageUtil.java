@@ -13,4 +13,10 @@ public class ImageUtil {
                 .into(imageView);
     }
 
+    public static void displayPlaceholderImage(ImageView imageView){
+        Glide.with(imageView)
+                .load(R.drawable.ic_music_video_black_24dp)
+                .into(imageView);
+    }
+
 }

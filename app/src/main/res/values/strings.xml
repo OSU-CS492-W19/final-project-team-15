@@ -3,6 +3,11 @@
     <string name="score_pre">Score:</string>
     <string name="correct_dialog">Correct</string>
     <string name="dialog_button_text">close</string>
-    <string name="incorrect_dialog">wrong</string>
+    <string name="incorrect_dialog">Incorrect</string>
     <string name="answer_arg_key">isCorrect</string>
+    <string name="songname_arg_key">songName</string>
+    <string name="song_url_arg_key">songUrl</string>
+    <string name="listen_spot">Listen On Spotify</string>
+    <string name="art_arg_url">albumArtURL</string>
+    <string name="dialog_correct_song_message">The correct answer was: %1$s</string>
 </resources>
