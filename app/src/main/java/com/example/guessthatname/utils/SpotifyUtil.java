@@ -48,16 +48,16 @@ public class SpotifyUtil {
     public static class CategoryList{
         Categories categories;
     }
-    static class Categories{
+    public static class Categories{
         ArrayList<Category> items;
     }
-    static class Category{
+    public static class Category{
         String href;
         ArrayList<CategoryIcon> icons;
         String id;
         String name;
     }
-    static class CategoryIcon{
+    public static class CategoryIcon{
         int height;
         int width;
         String url;
@@ -102,36 +102,109 @@ public class SpotifyUtil {
     }
 
 
-    static class PlayListList{
+    public static class PlayListList{
         MediaStore.Audio.Playlists playlists;
     }
-    static class Playlists{
+    public static class Playlists{
         ArrayList<Playlist> items;
     }
-    static class Playlist{
+    public static class Playlist{
         ArrayList<TrackLink> tracks;
     }
-    static class TrackLink{
+    public static class TrackLink{
         String href;
         int total;
     }
 
-    public static void getCategoriesPlaylist(){
+    public static class GetCategoriesPlaylist extends AsyncTask<Void, Void, PlayListList> {
+        public interface AsyncCallback {
+            void onPlayListListLoadFinished(PlayListList playListList);
+        }
 
+        private AsyncCallback mCallback;
+        private String mUrl;
+
+        public GetCategoriesPlaylist(String url, AsyncCallback callback) {
+            mUrl = url;
+            mCallback = callback;
+        }
+
+        @Override
+        protected PlayListList doInBackground(Void... voids) {
+            if (token == null)
+                getAuthToken();
+            PlayListList results = null;
+            try {
+                Log.d("SpotifyUtil", "Attempting to connect to API");
+                String categoriesPlaylistJSON = NetworkUtils.doHTTPGet(mUrl, token.access_token);
+                Gson gson = new Gson();
+                results = gson.fromJson(categoriesPlaylistJSON, PlayListList.class);
+                return results;
+            } catch (IOException e) {
+                Log.d("SpotifyUtil", e.getStackTrace().toString());
+            }
+
+            return results;
+        }
+
+        @Override
+        protected void onPostExecute(PlayListList result) {
+            if (result != null) {
+                mCallback.onPlayListListLoadFinished(result);
+            }
+        }
     }
-    static class PlayListTracks{
+
+
+    public static class PlayListTracks{
         ArrayList<PlayListTrack> items;
     }
-    static class PlayListTrack{
+    public static class PlayListTrack{
         Track track;
     }
-    static class Track{
+    public static class Track{
         String preview_url;
         int popularity;
         String name;
     }
-    public static void getPlaylistsTracks(){
 
+    public static class GetPlayListTracks extends AsyncTask<Void, Void, PlayListTracks> {
+        public interface AsyncCallback {
+            void onPlayListTracksLoadFinished(PlayListTracks playListTracks);
+        }
+
+        private AsyncCallback mCallback;
+        private String mUrl;
+
+        public GetPlayListTracks(String url, AsyncCallback callback) {
+            mUrl = url;
+            mCallback = callback;
+        }
+
+        @Override
+        protected PlayListTracks doInBackground(Void... voids) {
+            if (token == null)
+                getAuthToken();
+            PlayListTracks results = null;
+            try {
+                Log.d("SpotifyUtil", "Attempting to connect to API");
+                String playListTracksJSON = NetworkUtils.doHTTPGet(mUrl, token.access_token);
+                Gson gson = new Gson();
+                results = gson.fromJson(playListTracksJSON, PlayListTracks.class);
+                return results;
+            } catch (IOException e) {
+                Log.d("SpotifyUtil", e.getStackTrace().toString());
+            }
+
+            return results;
+        }
+
+        @Override
+        protected void onPostExecute(PlayListTracks result) {
+            if (result != null) {
+                mCallback.onPlayListTracksLoadFinished(result);
+            }
+        }
     }
 
 }
