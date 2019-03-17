@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.guessthatname.SettingsActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/content_settings"
+        tools:layout_editor_absoluteX="112dp"
+        tools:layout_editor_absoluteY="56dp" />
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="619dp"
+        android:layout_marginTop="284dp"
+        android:layout_marginEnd="236dp"
+        android:background="@drawable/settings_shape_left"
+        android:rotation="-30"
+        app:layout_constraintEnd_toEndOf="@+id/include"
+        app:layout_constraintTop_toTopOf="@+id/appBarLayout" />
+
+    <TextView
+        android:layout_width="301dp"
+        android:layout_height="619dp"
+        android:layout_marginStart="240dp"
+        android:layout_marginTop="228dp"
+        android:background="@drawable/settings_shape_right"
+        android:rotation="30"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/appBarLayout" />
+
+</android.support.constraint.ConstraintLayout>
