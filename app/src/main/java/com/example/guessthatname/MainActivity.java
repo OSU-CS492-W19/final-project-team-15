@@ -44,9 +44,24 @@ private ProgressBar mLoadingIndicatorPB;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mFragmentManager = getSupportFragmentManager();
+        mMediaPlayer = new MediaPlayer();
 
         mPlaceholderTV = findViewById(R.id.tv_album_art_placeholder);
         mPlaceholderTV.setText("?");
+        mPlaceholderTV.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (mMediaPlayer.isPlaying()){
+                    mMediaPlayer.stop();
+                }
+                try{
+                    mMediaPlayer.prepare(); // might take long! (for buffering, etc)
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
+                mMediaPlayer.start();
+            }
+        });
 
         mLoadingIndicatorPB = findViewById(R.id.pb_loading_indicator);
 
@@ -76,7 +91,6 @@ private ProgressBar mLoadingIndicatorPB;
             typeface = getResources().getFont(arcade_classic);
             mScoreTV.setTypeface(typeface);
         }
-        mMediaPlayer = new MediaPlayer();
         playSongFromUrl("https://p.scdn.co/mp3-preview/3eb16018c2a700240e9dfb8817b6f2d041f15eb1?cid=774b29d4f13844c495f206cafdad9c86");
 
         showLoadingScreen(false);
