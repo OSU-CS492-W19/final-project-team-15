@@ -15,6 +15,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
     private int score;
     private Choice[] mChoices;
+    private ProgressBar mLoadingIndicatorPB;
     private TextView mScoreTV;
     private ImageView mAlbumArtIV;
     private static final String TAG = "GuessThatName";
@@ -43,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mLoadingIndicatorPB = findViewById(R.id.pb_loading_indicator);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -76,6 +80,36 @@ public class MainActivity extends AppCompatActivity {
         }
         mMediaPlayer = new MediaPlayer();
         playSongFromUrl("https://p.scdn.co/mp3-preview/3eb16018c2a700240e9dfb8817b6f2d041f15eb1?cid=774b29d4f13844c495f206cafdad9c86");
+
+        showLoadingScreen(false);
+    }
+
+    /**
+     * Sets all items on the main activity to either visible or visible
+     * depending on bool value passed in. Displays loading icon on true.
+     * @param show
+     */
+    public void showLoadingScreen(Boolean show) {
+        int vis1, vis2;
+        if(show) {
+            vis1 = View.INVISIBLE;
+            vis2 = View.VISIBLE;
+        } else {
+            vis1 = View.VISIBLE;
+            vis2 = View.INVISIBLE;
+        }
+
+        //Score
+        mScoreTV.setVisibility(vis1);
+        // Album art
+        mAlbumArtIV.setVisibility(vis1);
+        // Buttons
+        for(int i = 0; i < 4; i++) {
+            mChoices[i].setVisibility(vis1);
+        }
+
+        // Loading indicator
+        mLoadingIndicatorPB.setVisibility(vis2);
     }
 
     @Override
