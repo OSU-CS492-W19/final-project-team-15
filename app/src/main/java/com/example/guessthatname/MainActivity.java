@@ -158,6 +158,20 @@ private GameViewModel mGameViewModel;
         showLoadingScreen(false);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(mMediaPlayer != null && !mMediaPlayer.isPlaying()){
+            try{
+                mMediaPlayer.prepare(); // might take long! (for buffering, etc)
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            mMediaPlayer.start();
+        }
+    }
+
     /**
      * Sets all items on the main activity to either visible or visible
      * depending on bool value passed in. Displays loading icon on true.
@@ -317,7 +331,21 @@ private GameViewModel mGameViewModel;
         if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
         }else{
+            try{
+                mMediaPlayer.prepare(); // might take long! (for buffering, etc)
+            } catch (IOException e){
+                e.printStackTrace();
+            }
             mMediaPlayer.start();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (mMediaPlayer.isPlaying()){
+            mMediaPlayer.stop();
         }
     }
 }

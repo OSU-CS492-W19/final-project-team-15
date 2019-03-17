@@ -12,6 +12,7 @@ import com.example.guessthatname.utils.SpotifyUtil;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SettingsFragment extends PreferenceFragmentCompat
@@ -37,10 +38,16 @@ public class SettingsFragment extends PreferenceFragmentCompat
             public void onChange() {
                 ListPreference lp = (ListPreference) findPreference("genre_key");
                 mPrefEntries = getCategories();
-                lp.setEntries(mPrefEntries.first.toArray(new CharSequence[mPrefEntries.first.size()]));
-                lp.setEntryValues(mPrefEntries.second.toArray(new CharSequence[mPrefEntries.second.size()]));
-                lp.setValueIndex(lp.findIndexOfValue(genre));
-                lp.setSummary(mPrefEntries.first.get(lp.findIndexOfValue(genre)));
+                lp.setEntries(mPrefEntries.first.toArray(new CharSequence[0]));
+                lp.setEntryValues(mPrefEntries.second.toArray(new CharSequence[0]));
+                if (Arrays.asList(mPrefEntries.second.toArray()).contains(genre)){ //if the genre key is in our list
+                    //find its location and set that as preference
+                    lp.setValueIndex(lp.findIndexOfValue(genre));
+                    lp.setSummary(mPrefEntries.first.get(lp.findIndexOfValue(genre)));
+                } else { //otherwise set a default preference
+                    lp.setValueIndex(0);
+                    lp.setSummary(mPrefEntries.first.get(0));
+                }
             }
         });
         try {
@@ -77,6 +84,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
         for(SpotifyUtil.Category genre : mCategories.getCats().categories.items){
             categories.first.add(genre.name);
             categories.second.add(genre.id);
+            Log.d("Settings Fragment", "Category: " + genre.id);
+
         }
 
         return categories;
