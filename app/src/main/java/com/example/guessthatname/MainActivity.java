@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.os.Bundle;
@@ -17,6 +19,8 @@ import android.widget.TextView;
 import android.view.Menu;
 import android.view.MenuItem;
 import static com.example.guessthatname.R.font.arcade_classic;
+
+import java.io.IOException;
 import java.util.List;
 
 import static com.example.guessthatname.R.font.arcade_classic;
@@ -69,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
             typeface = getResources().getFont(arcade_classic);
             mScoreTV.setTypeface(typeface);
         }
+
+        playSongFromUrl("https://p.scdn.co/mp3-preview/3eb16018c2a700240e9dfb8817b6f2d041f15eb1?cid=774b29d4f13844c495f206cafdad9c86");
     }
 
     @Override
@@ -166,5 +172,23 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // TODO: Failure view
         }
+    }
+
+    public void playSongFromUrl(String url){
+        Log.d("Main Activity", "Streaming music");
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        try {
+            mediaPlayer.setDataSource(url);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        try{
+            mediaPlayer.prepare(); // might take long! (for buffering, etc)
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        mediaPlayer.start();
+
     }
 }
