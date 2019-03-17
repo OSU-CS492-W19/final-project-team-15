@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mAlbumArtIV;
     private static final String TAG = "GuessThatName";
     private static final String SCORE_KEY = "currentScore";
+    private MediaPlayer mMediaPlayer;
     private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
 
     @Override
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             typeface = getResources().getFont(arcade_classic);
             mScoreTV.setTypeface(typeface);
         }
-
+        mMediaPlayer = new MediaPlayer();
         playSongFromUrl("https://p.scdn.co/mp3-preview/3eb16018c2a700240e9dfb8817b6f2d041f15eb1?cid=774b29d4f13844c495f206cafdad9c86");
     }
 
@@ -176,19 +177,39 @@ public class MainActivity extends AppCompatActivity {
 
     public void playSongFromUrl(String url){
         Log.d("Main Activity", "Streaming music");
-        MediaPlayer mediaPlayer = new MediaPlayer();
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        try {
-            mediaPlayer.setDataSource(url);
-        } catch (IOException e){
-            e.printStackTrace();
+        if(!mMediaPlayer.isPlaying()){
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            try {
+                mMediaPlayer.setDataSource(url);
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            try{
+                mMediaPlayer.prepare(); // might take long! (for buffering, etc)
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            mMediaPlayer.start();
         }
-        try{
-            mediaPlayer.prepare(); // might take long! (for buffering, etc)
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-        mediaPlayer.start();
+    }
 
+    public void playStoppedPreview(){
+        if (!mMediaPlayer.isPlaying()){
+            mMediaPlayer.start();
+        }
+    }
+
+    public void pausePlayingPreview() {
+        Log.d("Main Activity", "Pausing playing preview");
+        if (mMediaPlayer.isPlaying()) {
+            mMediaPlayer.pause();
+        }
+    }
+
+    public void stopPlayingPreview(){
+        Log.d("Main Activity", "Stopping playing preview");
+        if (mMediaPlayer.isPlaying()){
+            mMediaPlayer.stop();
+        }
     }
 }
