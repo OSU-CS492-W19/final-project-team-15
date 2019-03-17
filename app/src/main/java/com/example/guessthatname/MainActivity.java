@@ -122,6 +122,8 @@ private GameViewModel mGameViewModel;
 
     public void loadCategory(String genre_key){
         showLoadingScreen(true);
+        if(genre_key == "___default___");
+            genre_key = "toplists";
         Log.d("SpotifyUtil", "genre_key: " + genre_key);
         SpotifyUtil.Category category = mGameViewModel.getCategory().getValue();
         if(category == null) {
@@ -144,7 +146,7 @@ private GameViewModel mGameViewModel;
     public void loadTracks(){
         ArrayList<SpotifyUtil.PlayListTrack> tracks = mGameViewModel.getTracks().getValue();
         if(tracks == null) {
-            new SpotifyUtil.GetPlayListTracks(mGameViewModel.getPlaylist().getValue().tracks.get(0).href, mGameViewModel).execute();
+            new SpotifyUtil.GetPlayListTracks(mGameViewModel.getPlaylist().getValue().tracks.href, mGameViewModel).execute();
         } else{
             startGame();
         }
