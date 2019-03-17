@@ -101,6 +101,45 @@ public class SpotifyUtil {
         }
     }
 
+    public static class GetCategory extends AsyncTask<Void, Void, Category> {
+        public interface AsyncCallback {
+            void onCategoryLoadFinished(Category category);
+        }
+
+        private AsyncCallback mCallback;
+        private String mCategoryId;
+
+        public GetCategory(String categoryId, AsyncCallback callback) {
+            mCallback = callback;
+            mCategoryId = categoryId;
+        }
+        
+        @Override
+        protected Category doInBackground(Void... voids) {
+            if(token == null)
+                getAuthToken();
+            Category results = null;
+            try {
+                Log.d("SpotifyUtil", "Attempting to connect to API");
+                String categoryJSON = NetworkUtils.doHTTPGet("https://api.spotify.com/v1/browse/categories/" + mCategoryId, token.access_token);
+                Gson gson = new Gson();
+                results = gson.fromJson(categoryJSON, Category.class);
+                return results;
+            } catch (IOException e) {
+                Log.d("SpotifyUtil", e.getStackTrace().toString());
+            }
+
+            return results;
+        }
+
+        @Override
+        protected void onPostExecute(Category result){
+            if (result != null) {
+                mCallback.onCategoryLoadFinished(result);
+            }
+        }
+    }
+
 
     public static class PlayListList{
         MediaStore.Audio.Playlists playlists;
@@ -166,6 +205,16 @@ public class SpotifyUtil {
         String preview_url;
         int popularity;
         String name;
+        String uri;
+        Album album;
+    }
+    public static class Album{
+        ArrayList<SpotifyImage> images;
+    }
+    public static class SpotifyImage{
+        int height;
+        int width;
+        String url;
     }
 
     public static class GetPlayListTracks extends AsyncTask<Void, Void, PlayListTracks> {
