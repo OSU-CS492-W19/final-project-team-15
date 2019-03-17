@@ -43,7 +43,7 @@ public class SpotifyUtil {
         Gson gson = new Gson();
         token = gson.fromJson(s, Token.class);
         Log.d("SpotifyUtil", "access_token: " + token.access_token);
-        token_expiration = new Date().getTime() + token.expires_in;
+        token_expiration = new Date().getTime() + (token.expires_in * 1000);
     }
 
 
