@@ -9,6 +9,8 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 import android.R;
 import android.util.Log;
@@ -16,14 +18,17 @@ import android.util.Pair;
 
 public class SpotifyUtil {
     private static Token token = null;
+    private static long token_expiration;
 
     public static void getAuthToken(){
+        if(token == null || new Date().getTime() >= token_expiration){
         try {
             setToken(NetworkUtils.getToken());
             //new TokenTask().execute().get();
             Log.d("SpotifyUtil", "finished getAuthToken");
         } catch(Exception e){
             e.printStackTrace();
+        }
         }
     }
 
@@ -38,10 +43,7 @@ public class SpotifyUtil {
         Gson gson = new Gson();
         token = gson.fromJson(s, Token.class);
         Log.d("SpotifyUtil", "access_token: " + token.access_token);
-//        switch(pair.second){
-//
-//        }
-
+        token_expiration = new Date().getTime() + token.expires_in;
     }
 
 
@@ -76,8 +78,7 @@ public class SpotifyUtil {
 
         @Override
         protected CategoryList doInBackground(Void... voids) {
-            if(token == null)
-                getAuthToken();
+            getAuthToken();
             CategoryList results = null;
             try {
                 Log.d("SpotifyUtil", "Attempting to connect to API");
@@ -113,11 +114,10 @@ public class SpotifyUtil {
             mCallback = callback;
             mCategoryId = categoryId;
         }
-        
+
         @Override
         protected Category doInBackground(Void... voids) {
-            if(token == null)
-                getAuthToken();
+            getAuthToken();
             Category results = null;
             try {
                 Log.d("SpotifyUtil", "Attempting to connect to API");
@@ -170,8 +170,7 @@ public class SpotifyUtil {
 
         @Override
         protected PlayListList doInBackground(Void... voids) {
-            if (token == null)
-                getAuthToken();
+            getAuthToken();
             PlayListList results = null;
             try {
                 Log.d("SpotifyUtil", "Attempting to connect to API");
@@ -232,8 +231,7 @@ public class SpotifyUtil {
 
         @Override
         protected PlayListTracks doInBackground(Void... voids) {
-            if (token == null)
-                getAuthToken();
+            getAuthToken();
             PlayListTracks results = null;
             try {
                 Log.d("SpotifyUtil", "Attempting to connect to API");
