@@ -1,5 +1,6 @@
 package com.example.guessthatname;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -7,6 +8,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 import static com.example.guessthatname.R.font.arcade_classic;
 import android.view.Menu;
 import android.view.MenuItem;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 private static final String TAG = "GuessThatName";
@@ -33,7 +37,10 @@ private Choice[] mChoices;
 private FragmentManager mFragmentManager;
 private SharedPreferences mPreferences;
 private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
+private MediaPlayer mMediaPlayer;
 
+
+    @SuppressLint("StringFormatInvalid")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,13 +69,15 @@ private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
         initChoices();
 
         mScoreTV = findViewById(R.id.tv_score);
-        mScoreTV.setText(getString(R.string.score_pre) + " " + score);
+        mScoreTV.setText(getString(R.string.score_pre)+" "+score);
 
         Typeface typeface = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             typeface = getResources().getFont(arcade_classic);
             mScoreTV.setTypeface(typeface);
         }
+        mMediaPlayer = new MediaPlayer();
+        playSongFromUrl("https://p.scdn.co/mp3-preview/3eb16018c2a700240e9dfb8817b6f2d041f15eb1?cid=774b29d4f13844c495f206cafdad9c86");
     }
 
     @Override
@@ -98,7 +107,7 @@ private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
 
     private void updateScore(int popularity) {
         score += (100 - (popularity / 2));
-        mScoreTV.setText(getString(R.string.score_pre) + " " + score);
+        mScoreTV.setText(getString(R.string.score_pre)+" "+score);
     }
 
     private void initChoices() {
@@ -187,6 +196,33 @@ private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
             DialogFragment mDialog = new AnswerDialogFragment();
             mDialog.setArguments(args);
             mDialog.show(mFragmentManager, DIALOG_TAG);
+        }
+    }
+
+    public void playSongFromUrl(String url){
+        Log.d("Main Activity", "Streaming music");
+        if(!mMediaPlayer.isPlaying()){
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            try {
+                mMediaPlayer.setDataSource(url);
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            try{
+                mMediaPlayer.prepare(); // might take long! (for buffering, etc)
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            mMediaPlayer.start();
+        }
+    }
+
+    public void togglePlayingPreview() {
+        Log.d("Main Activity", "Toggling playing preview");
+        if (mMediaPlayer.isPlaying()) {
+            mMediaPlayer.pause();
+        }else{
+            mMediaPlayer.start();
         }
     }
 }
