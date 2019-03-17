@@ -20,25 +20,26 @@ public class SpotifyUtil {
     private static Token token = null;
     private static long token_expiration;
 
-    public static void getAuthToken(){
-        if(token == null || new Date().getTime() >= token_expiration){
-        try {
-            setToken(NetworkUtils.getToken());
-            //new TokenTask().execute().get();
-            Log.d("SpotifyUtil", "finished getAuthToken");
-        } catch(Exception e){
-            e.printStackTrace();
-        }
+    public static void getAuthToken() {
+        if (token == null || new Date().getTime() >= token_expiration) {
+            try {
+                setToken(NetworkUtils.getToken());
+                // new TokenTask().execute().get();
+                Log.d("SpotifyUtil", "finished getAuthToken");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    static class Token{
+    static class Token {
         String access_token;
         String token_type;
         int expires_in;
         String scope;
     }
-    public static void setToken(String s){
+
+    public static void setToken(String s) {
         Log.d("SpotifyUtil", "TOKEN SET");
         Gson gson = new Gson();
         token = gson.fromJson(s, Token.class);
@@ -46,23 +47,25 @@ public class SpotifyUtil {
         token_expiration = new Date().getTime() + (token.expires_in * 1000);
     }
 
+    public static class CategoryList {
+        public Categories categories;
+    }
 
-    public static class CategoryList{
-        Categories categories;
+    public static class Categories {
+        public ArrayList<Category> items;
     }
-    public static class Categories{
-        ArrayList<Category> items;
+
+    public static class Category {
+        public String href;
+        public ArrayList<CategoryIcon> icons;
+        public String id;
+        public String name;
     }
-    public static class Category{
-        String href;
-        ArrayList<CategoryIcon> icons;
-        String id;
-        String name;
-    }
-    public static class CategoryIcon{
-        int height;
-        int width;
-        String url;
+
+    public static class CategoryIcon {
+        public int height;
+        public int width;
+        public String url;
     }
 
     public static class GetListCategories extends AsyncTask<Void, Void, CategoryList> {
@@ -82,7 +85,8 @@ public class SpotifyUtil {
             CategoryList results = null;
             try {
                 Log.d("SpotifyUtil", "Attempting to connect to API");
-                String categoryListJSON = NetworkUtils.doHTTPGet("https://api.spotify.com/v1/browse/categories", token.access_token);
+                String categoryListJSON = NetworkUtils.doHTTPGet("https://api.spotify.com/v1/browse/categories",
+                        token.access_token);
                 Gson gson = new Gson();
                 results = gson.fromJson(categoryListJSON, CategoryList.class);
                 Log.d("SpotifyUtil", "results: " + results.categories.items.size());
@@ -95,7 +99,7 @@ public class SpotifyUtil {
         }
 
         @Override
-        protected void onPostExecute(CategoryList result){
+        protected void onPostExecute(CategoryList result) {
             if (result != null) {
                 mCallback.onCategoryListLoadFinished(result);
             }
@@ -121,7 +125,8 @@ public class SpotifyUtil {
             Category results = null;
             try {
                 Log.d("SpotifyUtil", "Attempting to connect to API");
-                String categoryJSON = NetworkUtils.doHTTPGet("https://api.spotify.com/v1/browse/categories/" + mCategoryId, token.access_token);
+                String categoryJSON = NetworkUtils
+                        .doHTTPGet("https://api.spotify.com/v1/browse/categories/" + mCategoryId, token.access_token);
                 Gson gson = new Gson();
                 results = gson.fromJson(categoryJSON, Category.class);
                 return results;
@@ -133,24 +138,26 @@ public class SpotifyUtil {
         }
 
         @Override
-        protected void onPostExecute(Category result){
+        protected void onPostExecute(Category result) {
             if (result != null) {
                 mCallback.onCategoryLoadFinished(result);
             }
         }
     }
 
-
-    public static class PlayListList{
+    public static class PlayListList {
         MediaStore.Audio.Playlists playlists;
     }
-    public static class Playlists{
+
+    public static class Playlists {
         ArrayList<Playlist> items;
     }
-    public static class Playlist{
+
+    public static class Playlist {
         ArrayList<TrackLink> tracks;
     }
-    public static class TrackLink{
+
+    public static class TrackLink {
         String href;
         int total;
     }
@@ -193,24 +200,27 @@ public class SpotifyUtil {
         }
     }
 
-
-    public static class PlayListTracks{
+    public static class PlayListTracks {
         ArrayList<PlayListTrack> items;
     }
-    public static class PlayListTrack{
+
+    public static class PlayListTrack {
         Track track;
     }
-    public static class Track{
+
+    public static class Track {
         String preview_url;
         int popularity;
         String name;
         String uri;
         Album album;
     }
-    public static class Album{
+
+    public static class Album {
         ArrayList<SpotifyImage> images;
     }
-    public static class SpotifyImage{
+
+    public static class SpotifyImage {
         int height;
         int width;
         String url;
