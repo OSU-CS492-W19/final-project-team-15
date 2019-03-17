@@ -68,15 +68,6 @@ private GameViewModel mGameViewModel;
 
         mLoadingIndicatorPB = findViewById(R.id.pb_loading_indicator);
 
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                mGameViewModel.clearRepository();
-            }
-        };
-        mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
-
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(SCORE_KEY)) {
                 score = savedInstanceState.getInt(SCORE_KEY);
@@ -129,21 +120,44 @@ private GameViewModel mGameViewModel;
                     showLoadingScreen(true);
                     mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
                     mLoadingErrorMessageTV.setVisibility(View.VISIBLE);
-
                 }
             }
         });
 
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                mGameViewModel.clearRepository();
+                mGameViewModel.loadCategory(mPreferences.getString("genre_key", "___default___"));
+            }
+        };
+        mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
+
         String categoryID = "rnb";
-        mGameViewModel.loadCategory(categoryID);
+        mGameViewModel.loadCategory(mPreferences.getString("genre_key", "___default___"));
 
     }
 
     public void startGame(){
-        //TODO start the game
+        // TODO: start the game
         mMediaPlayer = new MediaPlayer();
         playSongFromUrl("https://p.scdn.co/mp3-preview/3eb16018c2a700240e9dfb8817b6f2d041f15eb1?cid=774b29d4f13844c495f206cafdad9c86");
         showLoadingScreen(false);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(mMediaPlayer != null && !mMediaPlayer.isPlaying()){
+            try{
+                mMediaPlayer.prepare(); // might take long! (for buffering, etc)
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            mMediaPlayer.start();
+        }
     }
 
     /**
@@ -305,7 +319,21 @@ private GameViewModel mGameViewModel;
         if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
         }else{
+            try{
+                mMediaPlayer.prepare(); // might take long! (for buffering, etc)
+            } catch (IOException e){
+                e.printStackTrace();
+            }
             mMediaPlayer.start();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (mMediaPlayer.isPlaying()){
+            mMediaPlayer.stop();
         }
     }
 }

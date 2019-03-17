@@ -30,11 +30,14 @@ public class SpotifyRepository implements SpotifyUtil.GetCategory.AsyncCallback,
         tracks.setValue(null);
     }
 
-    public void loadCategory(String categoryID){
+    public void loadCategory(String genre_key){
+        if(genre_key == "___default___")
+            genre_key = "toplists";
+        Log.d("SpotifyUtil", "genre_key: " + genre_key);
         //Is category cached?
         if(category.getValue() == null) {
             loadingStatus.setValue(Status.LOADING);
-            new SpotifyUtil.GetCategory(categoryID, this).execute();
+            new SpotifyUtil.GetCategory(genre_key, this).execute();
         } else {
             loadPlaylist();
         }
@@ -43,7 +46,9 @@ public class SpotifyRepository implements SpotifyUtil.GetCategory.AsyncCallback,
         //Is playlist cached?
         if(playlist.getValue() == null){
             loadingStatus.setValue(Status.LOADING);
-            new SpotifyUtil.GetCategoriesPlaylist(category.getValue().href, this).execute();
+            String url = category.getValue().href;
+            Log.d("SpotifyUtil", "Loaded Category: " + category.getValue().name);
+            new SpotifyUtil.GetCategoriesPlaylist(url, this).execute();
         } else {
             loadTracks();
         }
@@ -52,7 +57,7 @@ public class SpotifyRepository implements SpotifyUtil.GetCategory.AsyncCallback,
         //Is tracks cached?
         if(tracks.getValue() == null) {
             loadingStatus.setValue(Status.LOADING);
-            new SpotifyUtil.GetPlayListTracks(playlist.getValue().tracks.get(0).href, this).execute();
+            new SpotifyUtil.GetPlayListTracks(playlist.getValue().tracks.href, this).execute();
         }
     }
 

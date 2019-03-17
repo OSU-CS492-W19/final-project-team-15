@@ -137,6 +137,7 @@ public class SpotifyUtil {
 
         @Override
         protected void onPostExecute(Category result) {
+            Log.d("SpotifyUtilGetCategory", "Category name: " + result.name);
             if (result != null) {
                 mCallback.onCategoryLoadFinished(result);
             }
@@ -151,7 +152,7 @@ public class SpotifyUtil {
         public ArrayList<Playlist> items;
     }
     public static class Playlist{
-        public ArrayList<TrackLink> tracks;
+        public TrackLink tracks;
     }
     public static class TrackLink{
         public String href;
@@ -167,6 +168,7 @@ public class SpotifyUtil {
         private String mUrl;
 
         public GetCategoriesPlaylist(String url, AsyncCallback callback) {
+            Log.d("SpotifyUtil", "GetCategoriesPlaylist url: " + url);
             mUrl = url;
             mCallback = callback;
         }
@@ -177,9 +179,11 @@ public class SpotifyUtil {
             PlayListList results = null;
             try {
                 Log.d("SpotifyUtil", "Attempting to connect to API");
-                String categoriesPlaylistJSON = NetworkUtils.doHTTPGet(mUrl, token.access_token);
+                String categoriesPlaylistJSON = NetworkUtils.doHTTPGet(mUrl + "/playlists", token.access_token);
+                Log.d("SpotifyUtil", "PlayListList results: " + categoriesPlaylistJSON);
                 Gson gson = new Gson();
                 results = gson.fromJson(categoriesPlaylistJSON, PlayListList.class);
+
                 return results;
             } catch (IOException e) {
                 Log.d("SpotifyUtil", e.getStackTrace().toString());
