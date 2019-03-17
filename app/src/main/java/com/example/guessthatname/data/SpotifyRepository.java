@@ -32,9 +32,6 @@ public class SpotifyRepository implements SpotifyUtil.GetCategory.AsyncCallback,
     }
 
     public void loadCategory(String genre_key){
-        if(genre_key == "___default___")
-            genre_key = "toplists";
-        genre_key = "toplists";
         Log.d("SpotifyUtil", "genre_key: " + genre_key);
         //Is category cached?
         loadingStatus.setValue(Status.LOADING);
