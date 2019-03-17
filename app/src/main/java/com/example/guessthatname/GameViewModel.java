@@ -19,6 +19,9 @@ public class GameViewModel extends AndroidViewModel implements SpotifyUtil.GetCa
 
     public GameViewModel(Application application){
         super(application);
+        category = new MutableLiveData<SpotifyUtil.Category>();
+        playlist = new MutableLiveData<SpotifyUtil.Playlist>();
+        tracks = new MutableLiveData<ArrayList<SpotifyUtil.PlayListTrack>>();
     }
     public LiveData<SpotifyUtil.Category> getCategory(){
         return category;
@@ -38,12 +41,12 @@ public class GameViewModel extends AndroidViewModel implements SpotifyUtil.GetCa
 
     // callbacks
     public void onCategoryLoadFinished(SpotifyUtil.Category category){
-        this.category.setValue(category);
+        this.category.postValue(category);
     }
     public void onPlayListListLoadFinished(SpotifyUtil.PlayListList playlistlist){
-        this.playlist.setValue(playlistlist.playlists.items.get(0));
+        this.playlist.postValue(playlistlist.playlists.items.get(0));
     }
     public void onPlayListTracksLoadFinished(SpotifyUtil.PlayListTracks tracks){
-        this.tracks.setValue(tracks.items);
+        this.tracks.postValue(tracks.items);
     }
 }

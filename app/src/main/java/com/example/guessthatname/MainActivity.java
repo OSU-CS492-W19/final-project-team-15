@@ -58,6 +58,7 @@ private GameViewModel mGameViewModel;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mGameViewModel = ViewModelProviders.of(this).get(GameViewModel.class);
+        Log.d("debug", mGameViewModel.toString());
         mFragmentManager = getSupportFragmentManager();
 
         mPlaceholderTV = findViewById(R.id.tv_album_art_placeholder);
@@ -71,7 +72,8 @@ private GameViewModel mGameViewModel;
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 // do something when prefs changed
                 mGameViewModel.resetGame();
-                loadCategory();
+                //mPreferences = sharedPreferences;
+                loadCategory(mPreferences.getString("genre_key", "___default___"));
             }
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
@@ -114,16 +116,16 @@ private GameViewModel mGameViewModel;
             }
         });
 
-        loadCategory();
+        loadCategory(mPreferences.getString("genre_key", "___default___"));
 
     }
 
-    public void loadCategory(){
-        //TODO display loading
+    public void loadCategory(String genre_key){
+        showLoadingScreen(true);
+        Log.d("SpotifyUtil", "genre_key: " + genre_key);
         SpotifyUtil.Category category = mGameViewModel.getCategory().getValue();
         if(category == null) {
-            String categoryId = ""; //TODO get shared preference for categoryid
-            new SpotifyUtil.GetCategory(categoryId, mGameViewModel).execute();
+            new SpotifyUtil.GetCategory(genre_key, mGameViewModel).execute();
         }
         else {
             loadPlaylist();
@@ -132,7 +134,9 @@ private GameViewModel mGameViewModel;
     public void loadPlaylist(){
         SpotifyUtil.Playlist playlist = mGameViewModel.getPlaylist().getValue();
         if(playlist == null){
-            new SpotifyUtil.GetCategoriesPlaylist(mGameViewModel.getCategory().getValue().href, mGameViewModel).execute();
+            String url = mGameViewModel.getCategory().getValue().href;
+            Log.d("SpotifyUtil", "Loaded Category: " + mGameViewModel.getCategory().getValue().name);
+            new SpotifyUtil.GetCategoriesPlaylist(url, mGameViewModel).execute();
         } else{
             loadTracks();
         }
@@ -147,7 +151,7 @@ private GameViewModel mGameViewModel;
     }
 
     public void startGame(){
-        //TODO start the game
+        // TODO: start the game
         mMediaPlayer = new MediaPlayer();
         playSongFromUrl("https://p.scdn.co/mp3-preview/3eb16018c2a700240e9dfb8817b6f2d041f15eb1?cid=774b29d4f13844c495f206cafdad9c86");
 

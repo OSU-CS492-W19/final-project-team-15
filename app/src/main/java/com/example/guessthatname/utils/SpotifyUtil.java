@@ -137,6 +137,7 @@ public class SpotifyUtil {
 
         @Override
         protected void onPostExecute(Category result) {
+            Log.d("SpotifyUtilGetCategory", "Category name: " + result.name);
             if (result != null) {
                 mCallback.onCategoryLoadFinished(result);
             }
@@ -167,6 +168,7 @@ public class SpotifyUtil {
         private String mUrl;
 
         public GetCategoriesPlaylist(String url, AsyncCallback callback) {
+            Log.d("SpotifyUtil", "GetCategoriesPlaylist url: " + url);
             mUrl = url;
             mCallback = callback;
         }
