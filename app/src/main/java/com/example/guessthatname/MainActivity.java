@@ -1,50 +1,53 @@
 package com.example.guessthatname;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
+import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import static com.example.guessthatname.R.font.arcade_classic;
 import android.view.Menu;
 import android.view.MenuItem;
-import static com.example.guessthatname.R.font.arcade_classic;
-
 import java.io.IOException;
-import java.util.List;
-
-import static com.example.guessthatname.R.font.arcade_classic;
-
-import com.example.guessthatname.utils.SpotifyUtil;
 
 public class MainActivity extends AppCompatActivity {
-    private SharedPreferences mPreferences;
-    private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
-    private int score;
-    private Choice[] mChoices;
-    private ProgressBar mLoadingIndicatorPB;
-    private TextView mScoreTV;
-    private ImageView mAlbumArtIV;
-    private static final String TAG = "GuessThatName";
-    private static final String SCORE_KEY = "currentScore";
-    private MediaPlayer mMediaPlayer;
-    private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
+private static final String TAG = "GuessThatName";
+private static final String DIALOG_TAG = "dialog";
+private static final String SCORE_KEY = "currentScore";
+private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
+private static final String testSpotifyUri = "spotify:track:11dFghVXANMlKmJXsNCbNl";
+
+private int score;
+private TextView mScoreTV;
+private TextView mPlaceholderTV;
+private Choice[] mChoices;
+private FragmentManager mFragmentManager;
+private SharedPreferences mPreferences;
+private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
+private MediaPlayer mMediaPlayer;
+private ProgressBar mLoadingIndicatorPB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mFragmentManager = getSupportFragmentManager();
+
+        mPlaceholderTV = findViewById(R.id.tv_album_art_placeholder);
+        mPlaceholderTV.setText("?");
 
         mLoadingIndicatorPB = findViewById(R.id.pb_loading_indicator);
 
@@ -56,10 +59,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
-        mAlbumArtIV = findViewById(R.id.iv_album_art);
-
-        ImageUtil.displayImageFromLink(mAlbumArtIV, testLink);
-        mAlbumArtIV.setVisibility(View.VISIBLE);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(SCORE_KEY)) {
@@ -71,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         initChoices();
 
         mScoreTV = findViewById(R.id.tv_score);
-        mScoreTV.setText(getString(R.string.score_pre) + " " + score);
+        mScoreTV.setText(getString(R.string.score_pre)+" "+score);
 
         Typeface typeface = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -102,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         //Score
         mScoreTV.setVisibility(vis1);
         // Album art
-        mAlbumArtIV.setVisibility(vis1);
+        mPlaceholderTV.setVisibility(vis1);
         // Buttons
         for(int i = 0; i < 4; i++) {
             mChoices[i].setVisibility(vis1);
@@ -139,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateScore(int popularity) {
         score += (100 - (popularity / 2));
-        mScoreTV.setText(getString(R.string.score_pre) + " " + score);
+        mScoreTV.setText(getString(R.string.score_pre)+" "+score);
     }
 
     private void initChoices() {
@@ -202,11 +201,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayResults(boolean correct) {
         Log.d(TAG, "Correct song? : " + correct);
-        if (correct) {
-            // TODO: Success view
-        } else {
-            // TODO: Failure view
-        }
+        Bundle args = new Bundle();
+            //boolean representing whether answer is correct
+            args.putBoolean(getString(R.string.answer_arg_key),correct);
+            //correct song name
+            args.putString(getString(R.string.songname_arg_key),"Darude - Sandstorm");
+            //spotify url for song
+            args.putString(getString(R.string.song_url_arg_key),testSpotifyUri);
+            //url for album art
+            args.putString(getString(R.string.art_arg_url), testLink);
+
+            //create dialog fragment
+            DialogFragment mDialog = new AnswerDialogFragment();
+            //pass arguments
+            mDialog.setArguments(args);
+            //display modal
+            mDialog.show(mFragmentManager, DIALOG_TAG);
     }
 
     public void playSongFromUrl(String url){
