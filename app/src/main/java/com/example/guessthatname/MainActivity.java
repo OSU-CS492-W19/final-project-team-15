@@ -147,12 +147,12 @@ private Boolean mCanPlayMusic;
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 mGameViewModel.clearRepository();
-                mGameViewModel.loadCategory(mPreferences.getString("genre_key", "___default___"));
+                mGameViewModel.loadCategory(mPreferences.getString("genre_key", "toplists"));
             }
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
 
-        mGameViewModel.loadCategory(mPreferences.getString("genre_key", "___default___"));
+        mGameViewModel.loadCategory(mPreferences.getString("genre_key", "toplists"));
 
     }
 
