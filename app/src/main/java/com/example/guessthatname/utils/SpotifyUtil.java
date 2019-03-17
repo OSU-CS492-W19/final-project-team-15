@@ -47,22 +47,20 @@ public class SpotifyUtil {
         token_expiration = new Date().getTime() + (token.expires_in * 1000);
     }
 
-    public static class CategoryList {
+
+    public static class CategoryList{
         public Categories categories;
     }
-
-    public static class Categories {
+    public static class Categories{
         public ArrayList<Category> items;
     }
-
-    public static class Category {
+    public static class Category{
         public String href;
         public ArrayList<CategoryIcon> icons;
         public String id;
         public String name;
     }
-
-    public static class CategoryIcon {
+    public static class CategoryIcon{
         public int height;
         public int width;
         public String url;
@@ -139,27 +137,26 @@ public class SpotifyUtil {
 
         @Override
         protected void onPostExecute(Category result) {
+            Log.d("SpotifyUtilGetCategory", "Category name: " + result.name);
             if (result != null) {
                 mCallback.onCategoryLoadFinished(result);
             }
         }
     }
 
-    public static class PlayListList {
-        MediaStore.Audio.Playlists playlists;
-    }
 
-    public static class Playlists {
-        ArrayList<Playlist> items;
+    public static class PlayListList{
+        public Playlists playlists;
     }
-
-    public static class Playlist {
-        ArrayList<TrackLink> tracks;
+    public static class Playlists{
+        public ArrayList<Playlist> items;
     }
-
-    public static class TrackLink {
-        String href;
-        int total;
+    public static class Playlist{
+        public TrackLink tracks;
+    }
+    public static class TrackLink{
+        public String href;
+        public int total;
     }
 
     public static class GetCategoriesPlaylist extends AsyncTask<Void, Void, PlayListList> {
@@ -171,6 +168,7 @@ public class SpotifyUtil {
         private String mUrl;
 
         public GetCategoriesPlaylist(String url, AsyncCallback callback) {
+            Log.d("SpotifyUtil", "GetCategoriesPlaylist url: " + url);
             mUrl = url;
             mCallback = callback;
         }
@@ -181,9 +179,11 @@ public class SpotifyUtil {
             PlayListList results = null;
             try {
                 Log.d("SpotifyUtil", "Attempting to connect to API");
-                String categoriesPlaylistJSON = NetworkUtils.doHTTPGet(mUrl, token.access_token);
+                String categoriesPlaylistJSON = NetworkUtils.doHTTPGet(mUrl + "/playlists", token.access_token);
+                Log.d("SpotifyUtil", "PlayListList results: " + categoriesPlaylistJSON);
                 Gson gson = new Gson();
                 results = gson.fromJson(categoriesPlaylistJSON, PlayListList.class);
+
                 return results;
             } catch (IOException e) {
                 Log.d("SpotifyUtil", e.getStackTrace().toString());
@@ -200,30 +200,27 @@ public class SpotifyUtil {
         }
     }
 
-    public static class PlayListTracks {
-        ArrayList<PlayListTrack> items;
-    }
 
-    public static class PlayListTrack {
-        Track track;
+    public static class PlayListTracks{
+        public ArrayList<PlayListTrack> items;
     }
-
-    public static class Track {
-        String preview_url;
-        int popularity;
-        String name;
-        String uri;
-        Album album;
+    public static class PlayListTrack{
+        public Track track;
     }
-
-    public static class Album {
-        ArrayList<SpotifyImage> images;
+    public static class Track{
+        public String preview_url;
+        public int popularity;
+        public String name;
+        public String uri;
+        public Album album;
     }
-
-    public static class SpotifyImage {
-        int height;
-        int width;
-        String url;
+    public static class Album{
+        public ArrayList<SpotifyImage> images;
+    }
+    public static class SpotifyImage{
+        public int height;
+        public int width;
+        public String url;
     }
 
     public static class GetPlayListTracks extends AsyncTask<Void, Void, PlayListTracks> {

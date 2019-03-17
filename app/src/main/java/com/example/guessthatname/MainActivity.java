@@ -1,5 +1,15 @@
 package com.example.guessthatname;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.provider.MediaStore;
+import android.support.annotation.Nullable;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -20,7 +30,12 @@ import android.widget.TextView;
 import static com.example.guessthatname.R.font.arcade_classic;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.example.guessthatname.data.Status;
+import com.example.guessthatname.utils.SpotifyUtil;
+
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 private static final String TAG = "GuessThatName";
@@ -38,6 +53,9 @@ private SharedPreferences mPreferences;
 private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
 private MediaPlayer mMediaPlayer;
 private ProgressBar mLoadingIndicatorPB;
+private TextView mLoadingErrorMessageTV;
+private GameViewModel mGameViewModel;
+private Boolean mCanPlayMusic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +63,7 @@ private ProgressBar mLoadingIndicatorPB;
         setContentView(R.layout.activity_main);
         mFragmentManager = getSupportFragmentManager();
         mMediaPlayer = new MediaPlayer();
+        mCanPlayMusic = false;
 
         mPlaceholderTV = findViewById(R.id.tv_album_art_placeholder);
         mPlaceholderTV.setText("?");
@@ -63,16 +82,9 @@ private ProgressBar mLoadingIndicatorPB;
             }
         });
 
-        mLoadingIndicatorPB = findViewById(R.id.pb_loading_indicator);
+        mLoadingErrorMessageTV = findViewById(R.id.tv_loading_error_message);
 
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                // do something when prefs changed
-            }
-        };
-        mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
+        mLoadingIndicatorPB = findViewById(R.id.pb_loading_indicator);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(SCORE_KEY)) {
@@ -91,8 +103,63 @@ private ProgressBar mLoadingIndicatorPB;
             typeface = getResources().getFont(arcade_classic);
             mScoreTV.setTypeface(typeface);
         }
-        playSongFromUrl("https://p.scdn.co/mp3-preview/3eb16018c2a700240e9dfb8817b6f2d041f15eb1?cid=774b29d4f13844c495f206cafdad9c86");
 
+
+        mGameViewModel = ViewModelProviders.of(this).get(GameViewModel.class);
+
+        mGameViewModel.getCategory().observe(this, new Observer<SpotifyUtil.Category>() {
+            @Override
+            public void onChanged(@Nullable SpotifyUtil.Category category) {
+                Log.d("DEBUG", "CATEGORY HAS CHANGED");
+                mGameViewModel.loadPlaylist();
+            }
+        });
+        mGameViewModel.getPlaylist().observe(this, new Observer<SpotifyUtil.Playlist>() {
+            @Override
+            public void onChanged(@Nullable SpotifyUtil.Playlist playlist) {
+                mGameViewModel.loadTracks();
+            }
+        });
+        mGameViewModel.getTracks().observe(this, new Observer<ArrayList<SpotifyUtil.PlayListTrack>>() {
+            @Override
+            public void onChanged(@Nullable ArrayList<SpotifyUtil.PlayListTrack> tracks) {
+                startGame();
+            }
+        });
+
+        mGameViewModel.getLoadingStatus().observe(this, new Observer<Status>() {
+            @Override
+            public void onChanged(@Nullable Status status) {
+                if(status == Status.LOADING) {
+                    showLoadingScreen(true);
+                } else if (status == Status.SUCCESS) {
+                    showLoadingScreen(false);
+                } else {
+                    showLoadingScreen(true);
+                    mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
+                    mLoadingErrorMessageTV.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                mGameViewModel.clearRepository();
+                mGameViewModel.loadCategory(mPreferences.getString("genre_key", "___default___"));
+            }
+        };
+        mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
+
+        mGameViewModel.loadCategory(mPreferences.getString("genre_key", "___default___"));
+
+    }
+
+    public void startGame(){
+        // TODO: start the game
+        mMediaPlayer = new MediaPlayer();
+        playSongFromUrl("https://p.scdn.co/mp3-preview/3eb16018c2a700240e9dfb8817b6f2d041f15eb1?cid=774b29d4f13844c495f206cafdad9c86");
         showLoadingScreen(false);
     }
 
@@ -100,7 +167,7 @@ private ProgressBar mLoadingIndicatorPB;
     protected void onStart() {
         super.onStart();
 
-        if(mMediaPlayer != null && !mMediaPlayer.isPlaying()){
+        if(mMediaPlayer != null && !mMediaPlayer.isPlaying() && mCanPlayMusic){
             try{
                 mMediaPlayer.prepare(); // might take long! (for buffering, etc)
             } catch (IOException e){
@@ -266,6 +333,7 @@ private ProgressBar mLoadingIndicatorPB;
             } catch (IOException e){
                 e.printStackTrace();
             }
+            mCanPlayMusic = true;
             mMediaPlayer.start();
         }
     }
