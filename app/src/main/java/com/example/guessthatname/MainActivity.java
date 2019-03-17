@@ -36,15 +36,19 @@ import com.example.guessthatname.utils.SpotifyUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 private static final String TAG = "GuessThatName";
 private static final String DIALOG_TAG = "dialog";
 private static final String SCORE_KEY = "currentScore";
-private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
-private static final String testSpotifyUri = "spotify:track:11dFghVXANMlKmJXsNCbNl";
+private static final String QUESTION_KEY = "currentQuestionNumber";
+private static final String USED_KEY = "currentUsedQuestions";
 
 private int score;
+private SpotifyUtil.Track mSong;
+private Random rand = new Random(System.currentTimeMillis());
 private TextView mScoreTV;
 private TextView mPlaceholderTV;
 private Choice[] mChoices;
@@ -56,12 +60,20 @@ private ProgressBar mLoadingIndicatorPB;
 private TextView mLoadingErrorMessageTV;
 private GameViewModel mGameViewModel;
 private Boolean mCanPlayMusic;
+private ArrayList<SpotifyUtil.PlayListTrack> mTracks;
+private ArrayList<Integer> used;
+private int questionNumber;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mFragmentManager = getSupportFragmentManager();
+
+        used = new ArrayList<Integer>();
+
         mMediaPlayer = new MediaPlayer();
         mCanPlayMusic = false;
 
@@ -91,6 +103,14 @@ private Boolean mCanPlayMusic;
                 score = savedInstanceState.getInt(SCORE_KEY);
             } else {
                 score = 0;
+            }
+            if(savedInstanceState.containsKey(QUESTION_KEY)){
+                questionNumber = savedInstanceState.getInt(QUESTION_KEY);
+            } else{
+                questionNumber = 0;
+            }
+            if(savedInstanceState.containsKey(USED_KEY)){
+                used = savedInstanceState.getIntegerArrayList(USED_KEY);
             }
         }
         initChoices();
@@ -123,6 +143,7 @@ private Boolean mCanPlayMusic;
         mGameViewModel.getTracks().observe(this, new Observer<ArrayList<SpotifyUtil.PlayListTrack>>() {
             @Override
             public void onChanged(@Nullable ArrayList<SpotifyUtil.PlayListTrack> tracks) {
+                mTracks = tracks;
                 startGame();
             }
         });
@@ -158,8 +179,7 @@ private Boolean mCanPlayMusic;
 
     public void startGame(){
         // TODO: start the game
-        mMediaPlayer = new MediaPlayer();
-        playSongFromUrl("https://p.scdn.co/mp3-preview/3eb16018c2a700240e9dfb8817b6f2d041f15eb1?cid=774b29d4f13844c495f206cafdad9c86");
+        chooseTracks();
         showLoadingScreen(false);
     }
 
@@ -228,6 +248,12 @@ private Boolean mCanPlayMusic;
         if (score > 0) {
             outState.putInt(SCORE_KEY, score);
         }
+        if(questionNumber > 0){
+            outState.putInt(QUESTION_KEY, questionNumber);
+        }
+        if(used.size()>0){
+            outState.putIntegerArrayList(USED_KEY, used);
+        }
     }
 
     private void updateScore(int popularity) {
@@ -267,6 +293,8 @@ private Boolean mCanPlayMusic;
                             //Restore original button opacity
                             v.getBackground().setAlpha(255);
                             displayResults(mChoices[(Integer)v.getTag()].getCorrect());
+                            questionNumber++;
+                            chooseTracks();
                         }
                     } else {
                         //Restore original button opacity
@@ -286,10 +314,10 @@ private Boolean mCanPlayMusic;
      * 
      * @param songs
      */
-    public void updateChoices(Pair<String, Boolean> songs[]) {
+    public void updateChoices(List<Pair<String, Boolean>> songs) {
         for (int i = 0; i < 4; i++) {
-            mChoices[i].updateText(songs[i].first);
-            mChoices[i].setCorrectness(songs[i].second);
+            mChoices[i].updateText(songs.get(i).first);
+            mChoices[i].setCorrectness(songs.get(i).second);
         }
     }
 
@@ -297,19 +325,22 @@ private Boolean mCanPlayMusic;
         Log.d(TAG, "Correct song? : " + correct);
 
         //point value for dialog, TODO replace with track.popularity
-        int pop = 70;
+        int pop = mSong.popularity;
         int pts = 100 - (pop / 2);
+        if(correct){
+            updateScore(mSong.popularity);
+        }
         Bundle args = new Bundle();
             //boolean representing whether answer is correct
             args.putBoolean(getString(R.string.answer_arg_key),correct);
             //correct song name
-            args.putString(getString(R.string.songname_arg_key),"Darude - Sandstorm");
+            args.putString(getString(R.string.songname_arg_key),mSong.name);
             //question point value
             args.putInt(getString(R.string.question_points_arg),pts);
             //spotify url for song
-            args.putString(getString(R.string.song_url_arg_key),testSpotifyUri);
+            args.putString(getString(R.string.song_url_arg_key),mSong.uri);
             //url for album art
-            args.putString(getString(R.string.art_arg_url), testLink);
+            args.putSerializable(getString(R.string.art_arg_url), mSong.album.images.get(0));
 
             //create dialog fragment
             DialogFragment mDialog = new AnswerDialogFragment();
@@ -359,5 +390,29 @@ private Boolean mCanPlayMusic;
         if (mMediaPlayer.isPlaying()){
             mMediaPlayer.stop();
         }
+    }
+
+    private void chooseTracks(){
+        List<Pair<String, Boolean>> songs = new ArrayList<>();
+        int index;
+        int correct = rand.nextInt(4);
+        for(int i = 0; i<4; i++) {
+            index = rand.nextInt(mTracks.size());
+            while (used.contains(index) || mTracks.get(index).track.preview_url == null) {
+                index = rand.nextInt(mTracks.size());
+            }
+            used.add(index);
+            if(i==correct){
+                mSong = mTracks.get(index).track;
+            }
+            songs.add(new Pair<String, Boolean>(mTracks.get(index).track.name,(i==correct)));
+        }
+        updateChoices(songs);
+        if(mMediaPlayer.isPlaying()){
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = new MediaPlayer();
+        }
+        playSongFromUrl(mSong.preview_url);
     }
 }

@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.guessthatname.utils.SpotifyUtil;
+
 import java.net.URI;
 
 public class AnswerDialogFragment extends DialogFragment {
@@ -45,7 +47,10 @@ public class AnswerDialogFragment extends DialogFragment {
         }
         //display album art
         if(args.containsKey(getString(R.string.art_arg_url))){
-            ImageUtil.displayImageFromLink(albumartiv,args.getString(getString(R.string.art_arg_url)));
+            SpotifyUtil.SpotifyImage img = (SpotifyUtil.SpotifyImage) args.getSerializable(getString(R.string.art_arg_url));
+            albumartiv.setMaxHeight(img.height);
+            albumartiv.setMaxWidth(img.width);
+            ImageUtil.displayImageFromLink(albumartiv,img.url);
         }
         //set correct answer message
         if(args.containsKey(getString(R.string.songname_arg_key))){
