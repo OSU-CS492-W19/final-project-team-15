@@ -1,5 +1,4 @@
-# Client Secret File DO NOT COMMIT THIS FILE
-secrets.xml
+.DS_store
 
 # Built application files
 *.apk
