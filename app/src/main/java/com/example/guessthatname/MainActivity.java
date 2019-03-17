@@ -43,8 +43,6 @@ private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
         mPlaceholderTV = findViewById(R.id.tv_album_art_placeholder);
         mPlaceholderTV.setText("?");
 
-        displayResults(false);
-
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
