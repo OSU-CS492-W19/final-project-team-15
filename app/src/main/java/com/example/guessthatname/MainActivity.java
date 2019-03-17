@@ -1,6 +1,5 @@
 package com.example.guessthatname;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
