@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AnswerDialogFragment.DialogEventClickListener {
 private static final String TAG = "GuessThatName";
 private static final String DIALOG_TAG = "dialog";
 private static final String SCORE_KEY = "currentScore";
@@ -293,8 +293,6 @@ private int questionNumber;
                             //Restore original button opacity
                             v.getBackground().setAlpha(255);
                             displayResults(mChoices[(Integer)v.getTag()].getCorrect());
-                            questionNumber++;
-                            chooseTracks();
                         }
                     } else {
                         //Restore original button opacity
@@ -324,7 +322,7 @@ private int questionNumber;
     private void displayResults(boolean correct) {
         Log.d(TAG, "Correct song? : " + correct);
 
-        //point value for dialog, TODO replace with track.popularity
+        mMediaPlayer.stop();
         int pop = mSong.popularity;
         int pts = 100 - (pop / 2);
         if(correct){
@@ -408,11 +406,22 @@ private int questionNumber;
             songs.add(new Pair<String, Boolean>(mTracks.get(index).track.name,(i==correct)));
         }
         updateChoices(songs);
-        if(mMediaPlayer.isPlaying()){
+        if(mMediaPlayer.isPlaying()) {
             mMediaPlayer.stop();
-            mMediaPlayer.release();
-            mMediaPlayer = new MediaPlayer();
         }
+        mMediaPlayer.release();
+        mMediaPlayer = new MediaPlayer();
+
         playSongFromUrl(mSong.preview_url);
+    }
+
+    @Override
+    public void onDialogClick() {
+        questionNumber++;
+        if(questionNumber < 10 && questionNumber < mTracks.size()) {
+            chooseTracks();
+        }else{
+            //start new game
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.example.guessthatname;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,6 +18,22 @@ import com.example.guessthatname.utils.SpotifyUtil;
 import java.net.URI;
 
 public class AnswerDialogFragment extends DialogFragment {
+
+    public interface DialogEventClickListener{
+        void onDialogClick();
+    }
+
+    private DialogEventClickListener mListener;
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        try{
+            mListener = (DialogEventClickListener) context;
+        } catch (ClassCastException e){
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
@@ -65,6 +82,7 @@ public class AnswerDialogFragment extends DialogFragment {
         builder.setNegativeButton(R.string.dialog_button_text, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                mListener.onDialogClick();
                 dismiss();
             }
         });
@@ -72,6 +90,7 @@ public class AnswerDialogFragment extends DialogFragment {
         builder.setPositiveButton(getString(R.string.listen_spot), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                mListener.onDialogClick();
                 Uri uri = Uri.parse(url);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
