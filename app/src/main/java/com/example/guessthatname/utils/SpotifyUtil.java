@@ -46,21 +46,21 @@ public class SpotifyUtil {
 
 
     public static class CategoryList{
-        Categories categories;
+        public Categories categories;
     }
-    static class Categories{
-        ArrayList<Category> items;
+    public static class Categories{
+        public ArrayList<Category> items;
     }
-    static class Category{
-        String href;
-        ArrayList<CategoryIcon> icons;
-        String id;
-        String name;
+    public static class Category{
+        public String href;
+        public ArrayList<CategoryIcon> icons;
+        public String id;
+        public String name;
     }
-    static class CategoryIcon{
-        int height;
-        int width;
-        String url;
+    public static class CategoryIcon{
+        public int height;
+        public int width;
+        public String url;
     }
 
     public static class GetListCategories extends AsyncTask<Void, Void, CategoryList> {
