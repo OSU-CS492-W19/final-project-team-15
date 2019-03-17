@@ -11,4 +11,5 @@
     <string name="listen_spot">Listen On Spotify</string>
     <string name="art_arg_url">albumArtURL</string>
     <string name="dialog_correct_song_message">The correct answer was: %1$s</string>
+    <string name="loading_error_message">Unable to load application data. Check internet connectivity and try again.</string>
 </resources>

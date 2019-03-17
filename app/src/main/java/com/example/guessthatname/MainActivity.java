@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +16,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import static com.example.guessthatname.R.font.arcade_classic;
 import android.view.Menu;
@@ -38,9 +38,8 @@ private FragmentManager mFragmentManager;
 private SharedPreferences mPreferences;
 private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
 private MediaPlayer mMediaPlayer;
+private ProgressBar mLoadingIndicatorPB;
 
-
-    @SuppressLint("StringFormatInvalid")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +48,8 @@ private MediaPlayer mMediaPlayer;
 
         mPlaceholderTV = findViewById(R.id.tv_album_art_placeholder);
         mPlaceholderTV.setText("?");
+
+        mLoadingIndicatorPB = findViewById(R.id.pb_loading_indicator);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -78,6 +79,36 @@ private MediaPlayer mMediaPlayer;
         }
         mMediaPlayer = new MediaPlayer();
         playSongFromUrl("https://p.scdn.co/mp3-preview/3eb16018c2a700240e9dfb8817b6f2d041f15eb1?cid=774b29d4f13844c495f206cafdad9c86");
+
+        showLoadingScreen(false);
+    }
+
+    /**
+     * Sets all items on the main activity to either visible or visible
+     * depending on bool value passed in. Displays loading icon on true.
+     * @param show
+     */
+    public void showLoadingScreen(Boolean show) {
+        int vis1, vis2;
+        if(show) {
+            vis1 = View.INVISIBLE;
+            vis2 = View.VISIBLE;
+        } else {
+            vis1 = View.VISIBLE;
+            vis2 = View.INVISIBLE;
+        }
+
+        //Score
+        mScoreTV.setVisibility(vis1);
+        // Album art
+        mPlaceholderTV.setVisibility(vis1);
+        // Buttons
+        for(int i = 0; i < 4; i++) {
+            mChoices[i].setVisibility(vis1);
+        }
+
+        // Loading indicator
+        mLoadingIndicatorPB.setVisibility(vis2);
     }
 
     @Override
@@ -130,22 +161,22 @@ private MediaPlayer mMediaPlayer;
                     int action = event.getAction();
                     float x = event.getX();
                     float y = event.getY();
-                    float height = (float) v.getHeight();
-                    float width = (float) v.getWidth();
+                    float height = (float)v.getHeight();
+                    float width = (float)v.getWidth();
 
-                    // Check if the touch event is within the bounds of the button layout
-                    if ((0 < x && x < width) && (0 < y && y < height)) {
-                        if (action == MotionEvent.ACTION_DOWN) {
-                            // Fade the button when pressed
-                            ((ColorDrawable) v.getBackground()).setAlpha(100);
-                        } else if (action == MotionEvent.ACTION_UP) {
-                            // Restore original button opacity
-                            ((ColorDrawable) v.getBackground()).setAlpha(255);
-                            displayResults(mChoices[(Integer) v.getTag()].getCorrect());
+                    //Check if the touch event is within the bounds of the button layout
+                    if((0 < x && x < width) && (0 < y && y < height)) {
+                        if(action == MotionEvent.ACTION_DOWN) {
+                            //Fade the button when pressed
+                            v.getBackground().setAlpha(100);
+                        } else if(action == MotionEvent.ACTION_UP) {
+                            //Restore original button opacity
+                            v.getBackground().setAlpha(255);
+                            displayResults(mChoices[(Integer)v.getTag()].getCorrect());
                         }
                     } else {
-                        // Restore original button opacity
-                        ((ColorDrawable) v.getBackground()).setAlpha(255);
+                        //Restore original button opacity
+                        v.getBackground().setAlpha(255);
                     }
 
                     return true;
