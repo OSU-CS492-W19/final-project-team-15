@@ -193,23 +193,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void playStoppedPreview(){
-        if (!mMediaPlayer.isPlaying()){
-            mMediaPlayer.start();
-        }
-    }
-
-    public void pausePlayingPreview() {
-        Log.d("Main Activity", "Pausing playing preview");
+    public void togglePlayingPreview() {
+        Log.d("Main Activity", "Toggling playing preview");
         if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
-        }
-    }
-
-    public void stopPlayingPreview(){
-        Log.d("Main Activity", "Stopping playing preview");
-        if (mMediaPlayer.isPlaying()){
-            mMediaPlayer.stop();
+        }else{
+            mMediaPlayer.start();
         }
     }
 }
