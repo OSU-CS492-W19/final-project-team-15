@@ -8,44 +8,63 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Typeface;
+import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import static com.example.guessthatname.R.font.arcade_classic;
 import android.view.Menu;
 import android.view.MenuItem;
-import static com.example.guessthatname.R.font.arcade_classic;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.example.guessthatname.R.font.arcade_classic;
 
 import com.example.guessthatname.utils.SpotifyUtil;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
-    private SharedPreferences mPreferences;
-    private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
-    private int score;
-    private Choice[] mChoices;
-    private TextView mScoreTV;
-    private ImageView mAlbumArtIV;
-    private GameViewModel mGameViewModel;
-    private static final String TAG = "GuessThatName";
-    private static final String SCORE_KEY = "currentScore";
-    private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
+private static final String TAG = "GuessThatName";
+private static final String DIALOG_TAG = "dialog";
+private static final String SCORE_KEY = "currentScore";
+private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
+private static final String testSpotifyUri = "spotify:track:11dFghVXANMlKmJXsNCbNl";
+
+private int score;
+private TextView mScoreTV;
+private TextView mPlaceholderTV;
+private Choice[] mChoices;
+private FragmentManager mFragmentManager;
+private SharedPreferences mPreferences;
+private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
+private MediaPlayer mMediaPlayer;
+private ProgressBar mLoadingIndicatorPB;
+private GameViewModel mGameViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mGameViewModel = ViewModelProviders.of(this).get(GameViewModel.class);
+        mFragmentManager = getSupportFragmentManager();
+
+        mPlaceholderTV = findViewById(R.id.tv_album_art_placeholder);
+        mPlaceholderTV.setText("?");
+
+        mLoadingIndicatorPB = findViewById(R.id.pb_loading_indicator);
+
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
@@ -56,10 +75,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
-        mAlbumArtIV = findViewById(R.id.iv_album_art);
-
-        ImageUtil.displayImageFromLink(mAlbumArtIV, testLink);
-        mAlbumArtIV.setVisibility(View.VISIBLE);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(SCORE_KEY)) {
@@ -71,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         initChoices();
 
         mScoreTV = findViewById(R.id.tv_score);
-        mScoreTV.setText(getString(R.string.score_pre) + " " + score);
+        mScoreTV.setText(getString(R.string.score_pre)+" "+score);
 
         Typeface typeface = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -133,6 +148,38 @@ public class MainActivity extends AppCompatActivity {
 
     public void startGame(){
         //TODO start the game
+        mMediaPlayer = new MediaPlayer();
+        playSongFromUrl("https://p.scdn.co/mp3-preview/3eb16018c2a700240e9dfb8817b6f2d041f15eb1?cid=774b29d4f13844c495f206cafdad9c86");
+
+        showLoadingScreen(false);
+    }
+
+    /**
+     * Sets all items on the main activity to either visible or visible
+     * depending on bool value passed in. Displays loading icon on true.
+     * @param show
+     */
+    public void showLoadingScreen(Boolean show) {
+        int vis1, vis2;
+        if(show) {
+            vis1 = View.INVISIBLE;
+            vis2 = View.VISIBLE;
+        } else {
+            vis1 = View.VISIBLE;
+            vis2 = View.INVISIBLE;
+        }
+
+        //Score
+        mScoreTV.setVisibility(vis1);
+        // Album art
+        mPlaceholderTV.setVisibility(vis1);
+        // Buttons
+        for(int i = 0; i < 4; i++) {
+            mChoices[i].setVisibility(vis1);
+        }
+
+        // Loading indicator
+        mLoadingIndicatorPB.setVisibility(vis2);
     }
 
     @Override
@@ -162,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateScore(int popularity) {
         score += (100 - (popularity / 2));
-        mScoreTV.setText(getString(R.string.score_pre) + " " + score);
+        mScoreTV.setText(getString(R.string.score_pre)+" "+score);
     }
 
     private void initChoices() {
@@ -185,22 +232,22 @@ public class MainActivity extends AppCompatActivity {
                     int action = event.getAction();
                     float x = event.getX();
                     float y = event.getY();
-                    float height = (float) v.getHeight();
-                    float width = (float) v.getWidth();
+                    float height = (float)v.getHeight();
+                    float width = (float)v.getWidth();
 
-                    // Check if the touch event is within the bounds of the button layout
-                    if ((0 < x && x < width) && (0 < y && y < height)) {
-                        if (action == MotionEvent.ACTION_DOWN) {
-                            // Fade the button when pressed
-                            ((ColorDrawable) v.getBackground()).setAlpha(100);
-                        } else if (action == MotionEvent.ACTION_UP) {
-                            // Restore original button opacity
-                            ((ColorDrawable) v.getBackground()).setAlpha(255);
-                            displayResults(mChoices[(Integer) v.getTag()].getCorrect());
+                    //Check if the touch event is within the bounds of the button layout
+                    if((0 < x && x < width) && (0 < y && y < height)) {
+                        if(action == MotionEvent.ACTION_DOWN) {
+                            //Fade the button when pressed
+                            v.getBackground().setAlpha(100);
+                        } else if(action == MotionEvent.ACTION_UP) {
+                            //Restore original button opacity
+                            v.getBackground().setAlpha(255);
+                            displayResults(mChoices[(Integer)v.getTag()].getCorrect());
                         }
                     } else {
-                        // Restore original button opacity
-                        ((ColorDrawable) v.getBackground()).setAlpha(255);
+                        //Restore original button opacity
+                        v.getBackground().setAlpha(255);
                     }
 
                     return true;
@@ -225,10 +272,48 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayResults(boolean correct) {
         Log.d(TAG, "Correct song? : " + correct);
-        if (correct) {
-            // TODO: Success view
-        } else {
-            // TODO: Failure view
+        Bundle args = new Bundle();
+            //boolean representing whether answer is correct
+            args.putBoolean(getString(R.string.answer_arg_key),correct);
+            //correct song name
+            args.putString(getString(R.string.songname_arg_key),"Darude - Sandstorm");
+            //spotify url for song
+            args.putString(getString(R.string.song_url_arg_key),testSpotifyUri);
+            //url for album art
+            args.putString(getString(R.string.art_arg_url), testLink);
+
+            //create dialog fragment
+            DialogFragment mDialog = new AnswerDialogFragment();
+            //pass arguments
+            mDialog.setArguments(args);
+            //display modal
+            mDialog.show(mFragmentManager, DIALOG_TAG);
+    }
+
+    public void playSongFromUrl(String url){
+        Log.d("Main Activity", "Streaming music");
+        if(!mMediaPlayer.isPlaying()){
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            try {
+                mMediaPlayer.setDataSource(url);
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            try{
+                mMediaPlayer.prepare(); // might take long! (for buffering, etc)
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            mMediaPlayer.start();
+        }
+    }
+
+    public void togglePlayingPreview() {
+        Log.d("Main Activity", "Toggling playing preview");
+        if (mMediaPlayer.isPlaying()) {
+            mMediaPlayer.pause();
+        }else{
+            mMediaPlayer.start();
         }
     }
 }

@@ -20,25 +20,26 @@ public class SpotifyUtil {
     private static Token token = null;
     private static long token_expiration;
 
-    public static void getAuthToken(){
-        if(token == null || new Date().getTime() >= token_expiration){
-        try {
-            setToken(NetworkUtils.getToken());
-            //new TokenTask().execute().get();
-            Log.d("SpotifyUtil", "finished getAuthToken");
-        } catch(Exception e){
-            e.printStackTrace();
-        }
+    public static void getAuthToken() {
+        if (token == null || new Date().getTime() >= token_expiration) {
+            try {
+                setToken(NetworkUtils.getToken());
+                // new TokenTask().execute().get();
+                Log.d("SpotifyUtil", "finished getAuthToken");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    static class Token{
+    static class Token {
         String access_token;
         String token_type;
         int expires_in;
         String scope;
     }
-    public static void setToken(String s){
+
+    public static void setToken(String s) {
         Log.d("SpotifyUtil", "TOKEN SET");
         Gson gson = new Gson();
         token = gson.fromJson(s, Token.class);
@@ -82,7 +83,8 @@ public class SpotifyUtil {
             CategoryList results = null;
             try {
                 Log.d("SpotifyUtil", "Attempting to connect to API");
-                String categoryListJSON = NetworkUtils.doHTTPGet("https://api.spotify.com/v1/browse/categories", token.access_token);
+                String categoryListJSON = NetworkUtils.doHTTPGet("https://api.spotify.com/v1/browse/categories",
+                        token.access_token);
                 Gson gson = new Gson();
                 results = gson.fromJson(categoryListJSON, CategoryList.class);
                 Log.d("SpotifyUtil", "results: " + results.categories.items.size());
@@ -95,7 +97,7 @@ public class SpotifyUtil {
         }
 
         @Override
-        protected void onPostExecute(CategoryList result){
+        protected void onPostExecute(CategoryList result) {
             if (result != null) {
                 mCallback.onCategoryListLoadFinished(result);
             }
@@ -121,7 +123,8 @@ public class SpotifyUtil {
             Category results = null;
             try {
                 Log.d("SpotifyUtil", "Attempting to connect to API");
-                String categoryJSON = NetworkUtils.doHTTPGet("https://api.spotify.com/v1/browse/categories/" + mCategoryId, token.access_token);
+                String categoryJSON = NetworkUtils
+                        .doHTTPGet("https://api.spotify.com/v1/browse/categories/" + mCategoryId, token.access_token);
                 Gson gson = new Gson();
                 results = gson.fromJson(categoryJSON, Category.class);
                 return results;
@@ -133,7 +136,7 @@ public class SpotifyUtil {
         }
 
         @Override
-        protected void onPostExecute(Category result){
+        protected void onPostExecute(Category result) {
             if (result != null) {
                 mCallback.onCategoryLoadFinished(result);
             }
