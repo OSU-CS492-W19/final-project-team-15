@@ -5,6 +5,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.Xml;
 
+import com.example.guessthatname.BuildConfig;
+
 import java.io.IOException;
 import java.util.prefs.BackingStoreException;
 
@@ -18,8 +20,8 @@ import okhttp3.Response;
 public class NetworkUtils {
 
     private static final OkHttpClient mHTTPClient = new OkHttpClient();
-    public static final String client_secret = "61f03839c7eb427285916862a226058f";
-    public static final String client_id = "550e72b9edba4d4a96e4f903436e1130";
+    public static final String client_secret = BuildConfig.clientSecret;
+    public static final String client_id = BuildConfig.clientId;
 
     public static String doHTTPGet(String url, String token) throws IOException {
         Request request = new Request.Builder()
