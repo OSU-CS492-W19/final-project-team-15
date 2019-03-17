@@ -38,24 +38,24 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-private static final String TAG = "GuessThatName";
-private static final String DIALOG_TAG = "dialog";
-private static final String SCORE_KEY = "currentScore";
-private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
-private static final String testSpotifyUri = "spotify:track:11dFghVXANMlKmJXsNCbNl";
+    private static final String TAG = "GuessThatName";
+    private static final String DIALOG_TAG = "dialog";
+    private static final String SCORE_KEY = "currentScore";
+    private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
+    private static final String testSpotifyUri = "spotify:track:11dFghVXANMlKmJXsNCbNl";
 
-private int score;
-private TextView mScoreTV;
-private TextView mPlaceholderTV;
-private Choice[] mChoices;
-private FragmentManager mFragmentManager;
-private SharedPreferences mPreferences;
-private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
-private MediaPlayer mMediaPlayer;
-private ProgressBar mLoadingIndicatorPB;
-private TextView mLoadingErrorMessageTV;
-private GameViewModel mGameViewModel;
-private Boolean mCanPlayMusic;
+    private int score;
+    private TextView mScoreTV;
+    private TextView mPlaceholderTV;
+    private Choice[] mChoices;
+    private FragmentManager mFragmentManager;
+    private SharedPreferences mPreferences;
+    private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
+    private MediaPlayer mMediaPlayer;
+    private ProgressBar mLoadingIndicatorPB;
+    private TextView mLoadingErrorMessageTV;
+    private GameViewModel mGameViewModel;
+    private Boolean mCanPlayMusic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
