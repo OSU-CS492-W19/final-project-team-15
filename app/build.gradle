@@ -11,9 +11,19 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            buildConfigField 'String', "clientId", SpotifyGuesser_clientId
+            resValue 'string', "client_id", SpotifyGuesser_clientId
+            buildConfigField 'String', "clientSecret", SpotifyGuesser_clientSecret
+            resValue 'string', "client_secret", SpotifyGuesser_clientSecret
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', "clientId", SpotifyGuesser_clientId
+            resValue 'string', "client_id", SpotifyGuesser_clientId
+            buildConfigField 'String', "clientSecret", SpotifyGuesser_clientSecret
+            resValue 'string', "client_secret", SpotifyGuesser_clientSecret
         }
     }
 }

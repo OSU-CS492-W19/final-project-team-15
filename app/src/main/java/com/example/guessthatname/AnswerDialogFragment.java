@@ -33,6 +33,7 @@ public class AnswerDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_fragment,null);
         TextView messagetv = view.findViewById(R.id.dialog_message);
         TextView songnametv = view.findViewById(R.id.song_name);
+        TextView pointstv = view.findViewById(R.id.question_points);
         ImageView albumartiv = view.findViewById(R.id.iv_album_art);
 
         final String url = args.getString(getString(R.string.song_url_arg_key));
@@ -49,6 +50,10 @@ public class AnswerDialogFragment extends DialogFragment {
         //set correct answer message
         if(args.containsKey(getString(R.string.songname_arg_key))){
             songnametv.setText(getString(R.string.dialog_correct_song_message,args.getString(getString(R.string.songname_arg_key))));
+        }
+        //set question point value
+        if(args.containsKey(getString(R.string.question_points_arg))){
+            pointstv.setText(getString(R.string.dialog_point_value_message, args.getInt(getString(R.string.question_points_arg))));
         }
         builder.setView(view);
         //add close button
