@@ -48,21 +48,21 @@ public class SpotifyUtil {
 
 
     public static class CategoryList{
-        Categories categories;
+        public Categories categories;
     }
     public static class Categories{
-        ArrayList<Category> items;
+        public ArrayList<Category> items;
     }
     public static class Category{
-        String href;
-        ArrayList<CategoryIcon> icons;
-        String id;
-        String name;
+        public String href;
+        public ArrayList<CategoryIcon> icons;
+        public String id;
+        public String name;
     }
     public static class CategoryIcon{
-        int height;
-        int width;
-        String url;
+        public int height;
+        public int width;
+        public String url;
     }
 
     public static class GetListCategories extends AsyncTask<Void, Void, CategoryList> {
@@ -142,17 +142,17 @@ public class SpotifyUtil {
 
 
     public static class PlayListList{
-        MediaStore.Audio.Playlists playlists;
+        public Playlists playlists;
     }
     public static class Playlists{
-        ArrayList<Playlist> items;
+        public ArrayList<Playlist> items;
     }
     public static class Playlist{
-        ArrayList<TrackLink> tracks;
+        public ArrayList<TrackLink> tracks;
     }
     public static class TrackLink{
-        String href;
-        int total;
+        public String href;
+        public int total;
     }
 
     public static class GetCategoriesPlaylist extends AsyncTask<Void, Void, PlayListList> {
@@ -195,25 +195,25 @@ public class SpotifyUtil {
 
 
     public static class PlayListTracks{
-        ArrayList<PlayListTrack> items;
+        public ArrayList<PlayListTrack> items;
     }
     public static class PlayListTrack{
-        Track track;
+        public Track track;
     }
     public static class Track{
-        String preview_url;
-        int popularity;
-        String name;
-        String uri;
-        Album album;
+        public String preview_url;
+        public int popularity;
+        public String name;
+        public String uri;
+        public Album album;
     }
     public static class Album{
-        ArrayList<SpotifyImage> images;
+        public ArrayList<SpotifyImage> images;
     }
     public static class SpotifyImage{
-        int height;
-        int width;
-        String url;
+        public int height;
+        public int width;
+        public String url;
     }
 
     public static class GetPlayListTracks extends AsyncTask<Void, Void, PlayListTracks> {

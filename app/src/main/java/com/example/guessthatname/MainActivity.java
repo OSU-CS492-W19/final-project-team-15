@@ -1,9 +1,13 @@
 package com.example.guessthatname;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.os.Bundle;
@@ -17,6 +21,8 @@ import android.widget.TextView;
 import android.view.Menu;
 import android.view.MenuItem;
 import static com.example.guessthatname.R.font.arcade_classic;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.guessthatname.R.font.arcade_classic;
@@ -30,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private Choice[] mChoices;
     private TextView mScoreTV;
     private ImageView mAlbumArtIV;
+    private GameViewModel mGameViewModel;
     private static final String TAG = "GuessThatName";
     private static final String SCORE_KEY = "currentScore";
     private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
@@ -38,12 +45,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        mGameViewModel = ViewModelProviders.of(this).get(GameViewModel.class);
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 // do something when prefs changed
+                mGameViewModel.resetGame();
+                loadCategory();
             }
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
@@ -69,6 +78,61 @@ public class MainActivity extends AppCompatActivity {
             typeface = getResources().getFont(arcade_classic);
             mScoreTV.setTypeface(typeface);
         }
+
+
+        mGameViewModel.getCategory().observe(this, new Observer<SpotifyUtil.Category>() {
+            @Override
+            public void onChanged(@Nullable SpotifyUtil.Category category) {
+                loadPlaylist();
+            }
+        });
+        mGameViewModel.getPlaylist().observe(this, new Observer<SpotifyUtil.Playlist>() {
+            @Override
+            public void onChanged(@Nullable SpotifyUtil.Playlist playlist) {
+                loadTracks();
+            }
+        });
+        mGameViewModel.getTracks().observe(this, new Observer<ArrayList<SpotifyUtil.PlayListTrack>>() {
+            @Override
+            public void onChanged(@Nullable ArrayList<SpotifyUtil.PlayListTrack> tracks) {
+                startGame();
+            }
+        });
+
+        loadCategory();
+
+    }
+
+    public void loadCategory(){
+        //TODO display loading
+        SpotifyUtil.Category category = mGameViewModel.getCategory().getValue();
+        if(category == null) {
+            String categoryId = ""; //TODO get shared preference for categoryid
+            new SpotifyUtil.GetCategory(categoryId, mGameViewModel).execute();
+        }
+        else {
+            loadPlaylist();
+        }
+    }
+    public void loadPlaylist(){
+        SpotifyUtil.Playlist playlist = mGameViewModel.getPlaylist().getValue();
+        if(playlist == null){
+            new SpotifyUtil.GetCategoriesPlaylist(mGameViewModel.getCategory().getValue().href, mGameViewModel).execute();
+        } else{
+            loadTracks();
+        }
+    }
+    public void loadTracks(){
+        ArrayList<SpotifyUtil.PlayListTrack> tracks = mGameViewModel.getTracks().getValue();
+        if(tracks == null) {
+            new SpotifyUtil.GetPlayListTracks(mGameViewModel.getPlaylist().getValue().tracks.get(0).href, mGameViewModel).execute();
+        } else{
+            startGame();
+        }
+    }
+
+    public void startGame(){
+        //TODO start the game
     }
 
     @Override
