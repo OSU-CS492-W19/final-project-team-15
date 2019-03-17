@@ -7,6 +7,7 @@ import android.util.Log;
 import com.example.guessthatname.utils.SpotifyUtil;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SpotifyRepository implements SpotifyUtil.GetCategory.AsyncCallback, SpotifyUtil.GetCategoriesPlaylist.AsyncCallback, SpotifyUtil.GetPlayListTracks.AsyncCallback {
 
@@ -81,7 +82,9 @@ public class SpotifyRepository implements SpotifyUtil.GetCategory.AsyncCallback,
 
     @Override
     public void onPlayListListLoadFinished(SpotifyUtil.PlayListList playlistList){
-        this.playlist.postValue(playlistList.playlists.items.get(0));
+        Random rand = new Random();
+        int index = rand.nextInt(playlistList.playlists.items.size() - 1);
+        this.playlist.postValue(playlistList.playlists.items.get(index));
     }
 
     @Override
