@@ -171,13 +171,12 @@ private MediaPlayer mMediaPlayer;
     private void displayResults(boolean correct) {
         Log.d(TAG, "Correct song? : " + correct);
         Bundle args = new Bundle();
-        if(correct) {
             //boolean representing whether answer is correct
-            args.putBoolean(getString(R.string.answer_arg_key),true);
+            args.putBoolean(getString(R.string.answer_arg_key),correct);
             //correct song name
             args.putString(getString(R.string.songname_arg_key),"Darude - Sandstorm");
             //spotify url for song
-            args.putString(getString(R.string.song_url_arg_key),"https://www.youtube.com/watch?v=c-ydGUHUDj8");
+            args.putString(getString(R.string.song_url_arg_key),testSpotifyUri);
             //url for album art
             args.putString(getString(R.string.art_arg_url), testLink);
 
@@ -187,16 +186,6 @@ private MediaPlayer mMediaPlayer;
             mDialog.setArguments(args);
             //display modal
             mDialog.show(mFragmentManager, DIALOG_TAG);
-        } else {
-            args.putBoolean(getString(R.string.answer_arg_key),false);
-            args.putString(getString(R.string.songname_arg_key),"Darude - Sandstorm");
-            args.putString(getString(R.string.song_url_arg_key),testSpotifyUri);
-            args.putString(getString(R.string.art_arg_url), testLink);
-
-            DialogFragment mDialog = new AnswerDialogFragment();
-            mDialog.setArguments(args);
-            mDialog.show(mFragmentManager, DIALOG_TAG);
-        }
     }
 
     public void playSongFromUrl(String url){
