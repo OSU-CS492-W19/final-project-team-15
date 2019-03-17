@@ -30,6 +30,7 @@ import static com.example.guessthatname.R.font.arcade_classic;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.guessthatname.data.Status;
 import com.example.guessthatname.utils.SpotifyUtil;
 
 import java.io.IOException;
@@ -51,17 +52,19 @@ private SharedPreferences mPreferences;
 private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
 private MediaPlayer mMediaPlayer;
 private ProgressBar mLoadingIndicatorPB;
+private TextView mLoadingErrorMessageTV;
 private GameViewModel mGameViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mGameViewModel = ViewModelProviders.of(this).get(GameViewModel.class);
         mFragmentManager = getSupportFragmentManager();
 
         mPlaceholderTV = findViewById(R.id.tv_album_art_placeholder);
         mPlaceholderTV.setText("?");
+
+        mLoadingErrorMessageTV = findViewById(R.id.tv_loading_error_message);
 
         mLoadingIndicatorPB = findViewById(R.id.pb_loading_indicator);
 
@@ -69,9 +72,7 @@ private GameViewModel mGameViewModel;
         mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                // do something when prefs changed
-                mGameViewModel.resetGame();
-                loadCategory();
+                mGameViewModel.clearRepository();
             }
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
@@ -95,16 +96,19 @@ private GameViewModel mGameViewModel;
         }
 
 
+        mGameViewModel = ViewModelProviders.of(this).get(GameViewModel.class);
+
         mGameViewModel.getCategory().observe(this, new Observer<SpotifyUtil.Category>() {
             @Override
             public void onChanged(@Nullable SpotifyUtil.Category category) {
-                loadPlaylist();
+                Log.d("DEBUG", "CATEGORY HAS CHANGED");
+                mGameViewModel.loadPlaylist();
             }
         });
         mGameViewModel.getPlaylist().observe(this, new Observer<SpotifyUtil.Playlist>() {
             @Override
             public void onChanged(@Nullable SpotifyUtil.Playlist playlist) {
-                loadTracks();
+                mGameViewModel.loadTracks();
             }
         });
         mGameViewModel.getTracks().observe(this, new Observer<ArrayList<SpotifyUtil.PlayListTrack>>() {
@@ -114,43 +118,31 @@ private GameViewModel mGameViewModel;
             }
         });
 
-        loadCategory();
+        mGameViewModel.getLoadingStatus().observe(this, new Observer<Status>() {
+            @Override
+            public void onChanged(@Nullable Status status) {
+                if(status == Status.LOADING) {
+                    showLoadingScreen(true);
+                } else if (status == Status.SUCCESS) {
+                    showLoadingScreen(false);
+                } else {
+                    showLoadingScreen(true);
+                    mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
+                    mLoadingErrorMessageTV.setVisibility(View.VISIBLE);
 
-    }
+                }
+            }
+        });
 
-    public void loadCategory(){
-        //TODO display loading
-        SpotifyUtil.Category category = mGameViewModel.getCategory().getValue();
-        if(category == null) {
-            String categoryId = ""; //TODO get shared preference for categoryid
-            new SpotifyUtil.GetCategory(categoryId, mGameViewModel).execute();
-        }
-        else {
-            loadPlaylist();
-        }
-    }
-    public void loadPlaylist(){
-        SpotifyUtil.Playlist playlist = mGameViewModel.getPlaylist().getValue();
-        if(playlist == null){
-            new SpotifyUtil.GetCategoriesPlaylist(mGameViewModel.getCategory().getValue().href, mGameViewModel).execute();
-        } else{
-            loadTracks();
-        }
-    }
-    public void loadTracks(){
-        ArrayList<SpotifyUtil.PlayListTrack> tracks = mGameViewModel.getTracks().getValue();
-        if(tracks == null) {
-            new SpotifyUtil.GetPlayListTracks(mGameViewModel.getPlaylist().getValue().tracks.get(0).href, mGameViewModel).execute();
-        } else{
-            startGame();
-        }
+        String categoryID = "rnb";
+        mGameViewModel.loadCategory(categoryID);
+
     }
 
     public void startGame(){
         //TODO start the game
         mMediaPlayer = new MediaPlayer();
         playSongFromUrl("https://p.scdn.co/mp3-preview/3eb16018c2a700240e9dfb8817b6f2d041f15eb1?cid=774b29d4f13844c495f206cafdad9c86");
-
         showLoadingScreen(false);
     }
 
