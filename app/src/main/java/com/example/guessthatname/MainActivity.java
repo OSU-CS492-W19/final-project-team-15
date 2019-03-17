@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -54,6 +55,7 @@ private MediaPlayer mMediaPlayer;
 private ProgressBar mLoadingIndicatorPB;
 private TextView mLoadingErrorMessageTV;
 private GameViewModel mGameViewModel;
+private Boolean mCanPlayMusic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ private GameViewModel mGameViewModel;
         setContentView(R.layout.activity_main);
         mFragmentManager = getSupportFragmentManager();
         mMediaPlayer = new MediaPlayer();
+        mCanPlayMusic = false;
 
         mPlaceholderTV = findViewById(R.id.tv_album_art_placeholder);
         mPlaceholderTV.setText("?");
@@ -164,7 +167,7 @@ private GameViewModel mGameViewModel;
     protected void onStart() {
         super.onStart();
 
-        if(mMediaPlayer != null && !mMediaPlayer.isPlaying()){
+        if(mMediaPlayer != null && !mMediaPlayer.isPlaying() && mCanPlayMusic){
             try{
                 mMediaPlayer.prepare(); // might take long! (for buffering, etc)
             } catch (IOException e){
@@ -330,6 +333,7 @@ private GameViewModel mGameViewModel;
             } catch (IOException e){
                 e.printStackTrace();
             }
+            mCanPlayMusic = true;
             mMediaPlayer.start();
         }
     }
