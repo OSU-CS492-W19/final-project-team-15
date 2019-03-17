@@ -6,7 +6,7 @@
         android:title="Genre"
         android:summary="%s"
         android:dialogTitle="Genre"
-        android:defaultValue="Top Lists" />
+        android:defaultValue="toplists" />
 
     <!--<EditTextPreference-->
         <!--android:key="@string/pref_rounds_key"-->
