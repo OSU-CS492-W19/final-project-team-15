@@ -29,7 +29,11 @@ public class GameViewModel extends AndroidViewModel {
     }
 
     public void clearRepository() {
-        spotifyRepository.clearRepository();
+        spotifyRepository = new SpotifyRepository();
+        category = spotifyRepository.getCategory();
+        playlist = spotifyRepository.getPlaylist();
+        tracks = spotifyRepository.getTracks();
+        loadingStatus = spotifyRepository.getLoadingStatus();
     }
 
     public LiveData<SpotifyUtil.Category> getCategory() {

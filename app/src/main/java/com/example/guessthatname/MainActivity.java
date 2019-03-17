@@ -134,7 +134,6 @@ private GameViewModel mGameViewModel;
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
 
-        String categoryID = "rnb";
         mGameViewModel.loadCategory(mPreferences.getString("genre_key", "___default___"));
 
     }
