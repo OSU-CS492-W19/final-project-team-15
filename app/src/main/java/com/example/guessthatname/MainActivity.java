@@ -214,11 +214,17 @@ private ProgressBar mLoadingIndicatorPB;
 
     private void displayResults(boolean correct) {
         Log.d(TAG, "Correct song? : " + correct);
+
+        //point value for dialog, TODO replace with track.popularity
+        int pop = 70;
+        int pts = 100 - (pop / 2);
         Bundle args = new Bundle();
             //boolean representing whether answer is correct
             args.putBoolean(getString(R.string.answer_arg_key),correct);
             //correct song name
             args.putString(getString(R.string.songname_arg_key),"Darude - Sandstorm");
+            //question point value
+            args.putInt(getString(R.string.question_points_arg),pts);
             //spotify url for song
             args.putString(getString(R.string.song_url_arg_key),testSpotifyUri);
             //url for album art
