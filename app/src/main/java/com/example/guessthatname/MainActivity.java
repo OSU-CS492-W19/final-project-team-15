@@ -24,6 +24,7 @@ private static final String TAG = "GuessThatName";
 private static final String DIALOG_TAG = "dialog";
 private static final String SCORE_KEY = "currentScore";
 private static final String testLink = "https://www.sageaudio.com/blog/wp-content/uploads/2014/04/album-art-300x300.png";
+private static final String testSpotifyUri = "spotify:track:11dFghVXANMlKmJXsNCbNl";
 
 private int score;
 private TextView mScoreTV;
@@ -41,6 +42,8 @@ private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
 
         mPlaceholderTV = findViewById(R.id.tv_album_art_placeholder);
         mPlaceholderTV.setText("?");
+
+        displayResults(false);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -162,7 +165,7 @@ private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
         Log.d(TAG, "Correct song? : " + correct);
         Bundle args = new Bundle();
         if(correct) {
-            //answer is correct
+            //boolean representing whether answer is correct
             args.putBoolean(getString(R.string.answer_arg_key),true);
             //correct song name
             args.putString(getString(R.string.songname_arg_key),"Darude - Sandstorm");
@@ -180,7 +183,7 @@ private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
         } else {
             args.putBoolean(getString(R.string.answer_arg_key),false);
             args.putString(getString(R.string.songname_arg_key),"Darude - Sandstorm");
-            args.putString(getString(R.string.song_url_arg_key),"https://www.youtube.com/watch?v=c-ydGUHUDj8");
+            args.putString(getString(R.string.song_url_arg_key),testSpotifyUri);
             args.putString(getString(R.string.art_arg_url), testLink);
 
             DialogFragment mDialog = new AnswerDialogFragment();
