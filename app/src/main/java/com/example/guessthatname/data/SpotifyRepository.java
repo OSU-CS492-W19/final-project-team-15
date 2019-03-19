@@ -82,7 +82,7 @@ public class SpotifyRepository implements SpotifyUtil.GetCategory.AsyncCallback,
 
     @Override
     public void onPlayListListLoadFinished(SpotifyUtil.PlayListList playlistList){
-        Random rand = new Random();
+        Random rand = new Random(System.currentTimeMillis());
         int index = rand.nextInt(playlistList.playlists.items.size() - 1);
         this.playlist.postValue(playlistList.playlists.items.get(index));
     }
