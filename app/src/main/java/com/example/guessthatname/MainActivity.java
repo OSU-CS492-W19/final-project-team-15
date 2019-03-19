@@ -394,14 +394,18 @@ private int questionNumber;
         int correct = rand.nextInt(4);
         for(int i = 0; i<4; i++) {
             index = rand.nextInt(mTracks.size());
-            while (used.contains(index) || mTracks.get(index).track.preview_url == null) {
-                index = rand.nextInt(mTracks.size());
+            if(i==correct){
+                while (used.contains(index) || mTracks.get(index).track.preview_url == null) {
+                    index = rand.nextInt(mTracks.size());
+                }
+                mSong = mTracks.get(index).track;
+            } else {
+                while (used.contains(index)) {
+                    index = rand.nextInt(mTracks.size());
+                }
             }
             used.add(index);
-            if(i==correct){
-                mSong = mTracks.get(index).track;
-            }
-            songs.add(new Pair<String, Boolean>(mTracks.get(index).track.name,(i==correct)));
+            songs.add(new Pair<>(mTracks.get(index).track.name,(i==correct)));
         }
         updateChoices(songs);
         if(mMediaPlayer.isPlaying()) {
@@ -419,7 +423,7 @@ private int questionNumber;
         if(questionNumber < 10 && questionNumber < mTracks.size()) {
             chooseTracks();
         }else{
-            //start new game
+
         }
     }
 }
