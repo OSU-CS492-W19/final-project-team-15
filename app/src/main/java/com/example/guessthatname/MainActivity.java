@@ -87,6 +87,12 @@ private int questionNumber;
                 if (mMediaPlayer.isPlaying()){
                     mMediaPlayer.stop();
                 }
+                try {
+                    mMediaPlayer.reset();
+                    mMediaPlayer.setDataSource(mSong.preview_url);
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
                 try{
                     mMediaPlayer.prepare(); // might take long! (for buffering, etc)
                 } catch (IOException e){
@@ -185,7 +191,6 @@ private int questionNumber;
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 mGameViewModel.clearRepository();
                 mGameViewModel.loadCategory(mPreferences.getString("genre_key", "toplists"));
-
             }
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
@@ -205,6 +210,12 @@ private int questionNumber;
         super.onStart();
 
         if(mMediaPlayer != null && !mMediaPlayer.isPlaying() && mCanPlayMusic){
+            try {
+                mMediaPlayer.reset();
+                mMediaPlayer.setDataSource(mSong.preview_url);
+            } catch (IOException e){
+                e.printStackTrace();
+            }
             try{
                 mMediaPlayer.prepare(); // might take long! (for buffering, etc)
             } catch (IOException e){
