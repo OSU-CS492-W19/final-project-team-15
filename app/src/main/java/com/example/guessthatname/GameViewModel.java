@@ -3,6 +3,7 @@ package com.example.guessthatname;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.util.Log;
 
 import com.example.guessthatname.data.SpotifyRepository;
 import com.example.guessthatname.data.Status;
@@ -11,6 +12,7 @@ import com.example.guessthatname.utils.SpotifyUtil;
 import java.util.ArrayList;
 
 public class GameViewModel extends AndroidViewModel {
+    private static final String TAG = "SpotifyUtil";
 
     private LiveData<SpotifyUtil.Category> category;
     private LiveData<SpotifyUtil.Playlist> playlist;
@@ -22,18 +24,19 @@ public class GameViewModel extends AndroidViewModel {
     public GameViewModel(Application application){
         super(application);
         spotifyRepository = new SpotifyRepository();
-        category = spotifyRepository.getCategory();
-        playlist = spotifyRepository.getPlaylist();
-        tracks = spotifyRepository.getTracks();
-        loadingStatus = spotifyRepository.getLoadingStatus();
+        clearRepository();
     }
 
     public void clearRepository() {
-        spotifyRepository = new SpotifyRepository();
+        spotifyRepository.clearRepository();
         category = spotifyRepository.getCategory();
+        Log.d(TAG, "clearRepository1: " + category.getValue());
         playlist = spotifyRepository.getPlaylist();
+        Log.d(TAG, "clearRepository2: "+ playlist.getValue());
         tracks = spotifyRepository.getTracks();
+        Log.d(TAG, "clearRepository3: "+ tracks.getValue());
         loadingStatus = spotifyRepository.getLoadingStatus();
+        Log.d("SpotifyUtil", "Repo Cleared");
     }
 
     public LiveData<SpotifyUtil.Category> getCategory() {
@@ -63,4 +66,5 @@ public class GameViewModel extends AndroidViewModel {
     public void loadTracks() {
         spotifyRepository.loadTracks();
     }
+
 }

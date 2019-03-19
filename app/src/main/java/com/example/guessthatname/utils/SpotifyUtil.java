@@ -145,7 +145,6 @@ public class SpotifyUtil {
         }
     }
 
-
     public static class PlayListList{
         public Playlists playlists;
     }
@@ -181,7 +180,7 @@ public class SpotifyUtil {
             try {
                 Log.d("SpotifyUtil", "Attempting to connect to API");
                 String categoriesPlaylistJSON = NetworkUtils.doHTTPGet(mUrl + "/playlists", token.access_token);
-                Log.d("SpotifyUtil", "PlayListList results: " + categoriesPlaylistJSON);
+//                Log.d("SpotifyUtil", "PlayListList results: " + categoriesPlaylistJSON);
                 Gson gson = new Gson();
                 results = gson.fromJson(categoriesPlaylistJSON, PlayListList.class);
 
