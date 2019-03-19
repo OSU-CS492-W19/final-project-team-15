@@ -216,11 +216,15 @@ public class SpotifyUtil {
     }
     public static class Album{
         public ArrayList<SpotifyImage> images;
+        public ArrayList<Artist> artists;
     }
     public static class SpotifyImage implements Serializable {
         public int height;
         public int width;
         public String url;
+    }
+    public static class Artist{
+        public String name;
     }
 
     public static class GetPlayListTracks extends AsyncTask<Void, Void, PlayListTracks> {

@@ -52,6 +52,7 @@ public class AnswerDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_fragment,null);
         TextView messagetv = view.findViewById(R.id.dialog_message);
         TextView songnametv = view.findViewById(R.id.song_name);
+        TextView artistnametv = view.findViewById(R.id.artist_name);
         TextView pointstv = view.findViewById(R.id.question_points);
         ImageView albumartiv = view.findViewById(R.id.iv_album_art);
 
@@ -72,6 +73,9 @@ public class AnswerDialogFragment extends DialogFragment {
         //set correct answer message
         if(args.containsKey(getString(R.string.songname_arg_key))){
             songnametv.setText(getString(R.string.dialog_correct_song_message,args.getString(getString(R.string.songname_arg_key))));
+        }
+        if(args.containsKey(getString(R.string.artistname_arg_key))){
+            artistnametv.setText(getString(R.string.dialog_correct_artist_message, args.getString(getString(R.string.artistname_arg_key))));
         }
         //set question point value
         if(args.containsKey(getString(R.string.question_points_arg))){

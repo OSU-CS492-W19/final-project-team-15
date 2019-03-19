@@ -365,6 +365,8 @@ private int questionNumber;
             args.putBoolean(getString(R.string.answer_arg_key),correct);
             //correct song name
             args.putString(getString(R.string.songname_arg_key),mSong.name);
+            //correct artist
+            args.putString(getString(R.string.artistname_arg_key), mSong.album.artists.get(0).name);
             //question point value
             args.putInt(getString(R.string.question_points_arg),pts);
             //spotify url for song
