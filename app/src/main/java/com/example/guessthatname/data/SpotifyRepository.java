@@ -86,15 +86,20 @@ public class SpotifyRepository implements SpotifyUtil.GetCategory.AsyncCallback,
 
     @Override
     public void onPlayListListLoadFinished(SpotifyUtil.PlayListList playlistList){
-        Random rand = new Random(System.currentTimeMillis());
-        int index = rand.nextInt(playlistList.playlists.items.size() - 1);
-        this.playlist.setValue(playlistList.playlists.items.get(index));
+        if(playlistList.playlists.items.size() > 0) {
+            Random rand = new Random(System.currentTimeMillis());
+            int index = rand.nextInt(playlistList.playlists.items.size());
+            this.playlist.setValue(playlistList.playlists.items.get(index));
+        } else {
+            this.playlist.setValue(null);
+        }
     }
 
     @Override
     public void onPlayListTracksLoadFinished(SpotifyUtil.PlayListTracks tracks){
         loadingStatus.setValue(Status.SUCCESS);
-        this.tracks.setValue(tracks.items);
+        if(tracks.items.size() > 0) this.tracks.setValue(tracks.items);
+        else this.tracks.setValue(null);
     }
 
 }
