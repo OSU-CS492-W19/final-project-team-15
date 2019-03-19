@@ -29,6 +29,8 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import static com.example.guessthatname.R.font.arcade_classic;
+import static java.lang.Math.min;
+
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -200,7 +202,6 @@ private int questionNumber;
     }
 
     public void startGame(){
-        // TODO: start the game
         chooseTracks();
         showLoadingScreen(false);
     }
@@ -288,6 +289,7 @@ private int questionNumber;
     }
 
     private void updateScore(int popularity) {
+        //increase score based on popularity of track
         score += (100 - (popularity / 2));
         mScoreTV.setText(getString(R.string.score_pre)+" "+score);
     }
@@ -299,8 +301,6 @@ private int questionNumber;
         mChoices[1] = new Choice((Button) findViewById(R.id.button_1), false);
         mChoices[2] = new Choice((Button) findViewById(R.id.button_2), false);
         mChoices[3] = new Choice((Button) findViewById(R.id.button_3), false);
-
-        // TODO: Send the above statements into the for loop below
 
         for (int i = 0; i < 4; i++) {
             // Add a touch listener to each of the buttons
@@ -425,31 +425,47 @@ private int questionNumber;
     }
 
     private void chooseTracks(){
+        //list of song names, boolean indicates if answer is correct
         List<Pair<String, Boolean>> songs = new ArrayList<>();
+        //index populated with random values to choose songs from track list
         int index;
+        //correct represents which button will hold correct answer
         int correct = rand.nextInt(4);
+
+        //for each button
         for(int i = 0; i<4; i++) {
+            //choose random index
             index = rand.nextInt(mTracks.size());
+            //if this answer is correct
             if(i==correct){
+                //ensure answer hasn't been used and has a preview to play
                 while (used.contains(index) || mTracks.get(index).track.preview_url == null) {
                     index = rand.nextInt(mTracks.size());
                 }
+                //store correct track
                 mSong = mTracks.get(index).track;
-            } else {
+            }
+            //if this answer is incorrect
+            else {
+                //ensure answer hasn't been used
                 while (used.contains(index)) {
                     index = rand.nextInt(mTracks.size());
                 }
             }
+            //record used songs
             used.add(index);
+            //add answer to list
             songs.add(new Pair<>(mTracks.get(index).track.name,(i==correct)));
         }
+        //use list to populate buttons with text
         updateChoices(songs);
+
+        //start track playback
         if(mMediaPlayer.isPlaying()) {
             mMediaPlayer.stop();
         }
         mMediaPlayer.release();
         mMediaPlayer = new MediaPlayer();
-
         playSongFromUrl(mSong.preview_url);
     }
 
@@ -471,13 +487,16 @@ private int questionNumber;
 
     @Override
     public void startNewGame() {
-        //start new game
+        //reset score
         score = 0;
         mScoreTV.setText(getString(R.string.score_pre)+" "+score);
         maxScore = 0;
+        //empty list of used songs
         used = new ArrayList<Integer>();
         questionNumber = 0;
+        //get new playlist
         mGameViewModel.loadPlaylist();
+        //ask new question
         chooseTracks();
     }
 }

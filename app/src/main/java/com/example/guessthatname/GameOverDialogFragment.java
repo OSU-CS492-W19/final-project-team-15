@@ -33,10 +33,14 @@ public class GameOverDialogFragment extends DialogFragment {
         builder.setNegativeButton(getString(R.string.dialog_button_text), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                mListener.startNewGame();
                 dismiss();
             }
         });
         return builder.create();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog){
+        mListener.startNewGame();
     }
 }

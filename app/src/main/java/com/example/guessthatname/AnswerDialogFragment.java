@@ -86,7 +86,6 @@ public class AnswerDialogFragment extends DialogFragment {
         builder.setNegativeButton(R.string.dialog_button_text, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                mListener.onDialogClick();
                 dismiss();
             }
         });
@@ -94,13 +93,18 @@ public class AnswerDialogFragment extends DialogFragment {
         builder.setPositiveButton(getString(R.string.listen_spot), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                mListener.onDialogClick();
                 Uri uri = Uri.parse(url);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
+                dismiss();
             }
         });
 
         return builder.create();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog){
+        mListener.onDialogClick();
     }
 }
