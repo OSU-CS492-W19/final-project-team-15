@@ -64,8 +64,6 @@ private ArrayList<SpotifyUtil.PlayListTrack> mTracks;
 private ArrayList<Integer> used;
 private int questionNumber;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
