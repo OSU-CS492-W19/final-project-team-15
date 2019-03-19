@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
+import android.support.design.button.MaterialButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.media.AudioManager;
@@ -39,14 +40,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements AnswerDialogFragment.DialogEventClickListener {
+public class MainActivity extends AppCompatActivity implements AnswerDialogFragment.DialogEventClickListener, GameOverDialogFragment.GameOverClickListener {
 private static final String TAG = "GuessThatName";
 private static final String DIALOG_TAG = "dialog";
+private static final String GAME_OVER_TAG = "gameoverman";
 private static final String SCORE_KEY = "currentScore";
+private static final String MAX_SCORE_KEY = "currentMaxScore";
 private static final String QUESTION_KEY = "currentQuestionNumber";
 private static final String USED_KEY = "currentUsedQuestions";
 
 private int score;
+private int maxScore;
 private SpotifyUtil.Track mSong;
 private Random rand = new Random(System.currentTimeMillis());
 private TextView mScoreTV;
@@ -110,6 +114,15 @@ private int questionNumber;
             if(savedInstanceState.containsKey(USED_KEY)){
                 used = savedInstanceState.getIntegerArrayList(USED_KEY);
             }
+            if(savedInstanceState.containsKey(MAX_SCORE_KEY)){
+                maxScore = savedInstanceState.getInt(MAX_SCORE_KEY);
+            } else{
+                maxScore = 0;
+            }
+        } else{
+            score = 0;
+            maxScore = 0;
+            questionNumber = 0;
         }
         initChoices();
 
@@ -249,8 +262,11 @@ private int questionNumber;
         if(questionNumber > 0){
             outState.putInt(QUESTION_KEY, questionNumber);
         }
-        if(used.size()>0){
+        if(used.size() > 0){
             outState.putIntegerArrayList(USED_KEY, used);
+        }
+        if(maxScore > 0){
+            outState.putInt(MAX_SCORE_KEY, maxScore);
         }
     }
 
@@ -323,6 +339,7 @@ private int questionNumber;
         mMediaPlayer.stop();
         int pop = mSong.popularity;
         int pts = 100 - (pop / 2);
+        maxScore += pts;
         if(correct){
             updateScore(mSong.popularity);
         }
@@ -419,7 +436,25 @@ private int questionNumber;
         if(questionNumber < 10 && questionNumber < mTracks.size()) {
             chooseTracks();
         }else{
-            //start new game
+            //display game over message
+            DialogFragment dialogFragment = new GameOverDialogFragment();
+            Bundle args = new Bundle();
+            args.putInt(getString(R.string.score_arg),score);
+            args.putInt(getString(R.string.max_score_arg),maxScore);
+            dialogFragment.setArguments(args);
+            dialogFragment.show(mFragmentManager,GAME_OVER_TAG);
         }
+    }
+
+    @Override
+    public void startNewGame() {
+        //start new game
+        score = 0;
+        mScoreTV.setText(getString(R.string.score_pre)+" "+score);
+        maxScore = 0;
+        used = new ArrayList<Integer>();
+        questionNumber = 0;
+        mGameViewModel.loadPlaylist();
+        chooseTracks();
     }
 }
