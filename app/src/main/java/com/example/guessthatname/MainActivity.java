@@ -433,7 +433,7 @@ private int questionNumber;
     @Override
     public void onDialogClick() {
         questionNumber++;
-        if(questionNumber < 1 && questionNumber < mTracks.size()) {
+        if(questionNumber < 10 && questionNumber < mTracks.size()) {
             chooseTracks();
         }else{
             //display game over message
