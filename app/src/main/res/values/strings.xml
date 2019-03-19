@@ -7,11 +7,13 @@
     <string name="incorrect_dialog">Incorrect</string>
     <string name="answer_arg_key">isCorrect</string>
     <string name="songname_arg_key">songName</string>
+    <string name="artistname_arg_key">artistName</string>
     <string name="song_url_arg_key">songUrl</string>
     <string name="question_points_arg">qPoints</string>
     <string name="listen_spot">Listen On Spotify</string>
     <string name="art_arg_url">albumArtURL</string>
     <string name="dialog_correct_song_message">The correct answer was: %1$s</string>
+    <string name="dialog_correct_artist_message">Artist: %1$s</string>
     <string name="dialog_point_value_message">This Question was worth %1$d points</string>
     <string name="loading_error_message">Unable to load application data. Check internet connectivity and try again.</string>
     <string name="game_over_message">End of Quiz,\nYour score was %1$d\nThe maximum Score was %2$d </string>
