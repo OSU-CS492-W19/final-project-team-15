@@ -84,7 +84,7 @@ public class SpotifyUtil {
             CategoryList results = null;
             try {
                 Log.d("SpotifyUtil", "Attempting to connect to API");
-                String categoryListJSON = NetworkUtils.doHTTPGet("https://api.spotify.com/v1/browse/categories",
+                String categoryListJSON = NetworkUtils.doHTTPGet("https://api.spotify.com/v1/browse/categories?limit=50",
                         token.access_token);
                 Gson gson = new Gson();
                 results = gson.fromJson(categoryListJSON, CategoryList.class);
