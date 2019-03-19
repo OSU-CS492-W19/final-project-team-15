@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -217,7 +218,7 @@ public class SpotifyUtil {
     public static class Album{
         public ArrayList<SpotifyImage> images;
     }
-    public static class SpotifyImage{
+    public static class SpotifyImage implements Serializable {
         public int height;
         public int width;
         public String url;

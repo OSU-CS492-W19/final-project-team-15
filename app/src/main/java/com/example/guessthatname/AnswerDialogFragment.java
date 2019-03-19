@@ -2,6 +2,7 @@ package com.example.guessthatname;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,9 +13,27 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.guessthatname.utils.SpotifyUtil;
+
 import java.net.URI;
 
 public class AnswerDialogFragment extends DialogFragment {
+
+    public interface DialogEventClickListener{
+        void onDialogClick();
+    }
+
+    private DialogEventClickListener mListener;
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        try{
+            mListener = (DialogEventClickListener) context;
+        } catch (ClassCastException e){
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
@@ -45,7 +64,10 @@ public class AnswerDialogFragment extends DialogFragment {
         }
         //display album art
         if(args.containsKey(getString(R.string.art_arg_url))){
-            ImageUtil.displayImageFromLink(albumartiv,args.getString(getString(R.string.art_arg_url)));
+            SpotifyUtil.SpotifyImage img = (SpotifyUtil.SpotifyImage) args.getSerializable(getString(R.string.art_arg_url));
+            albumartiv.setMaxHeight(img.height);
+            albumartiv.setMaxWidth(img.width);
+            ImageUtil.displayImageFromLink(albumartiv,img.url);
         }
         //set correct answer message
         if(args.containsKey(getString(R.string.songname_arg_key))){
@@ -60,6 +82,7 @@ public class AnswerDialogFragment extends DialogFragment {
         builder.setNegativeButton(R.string.dialog_button_text, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                mListener.onDialogClick();
                 dismiss();
             }
         });
@@ -67,6 +90,7 @@ public class AnswerDialogFragment extends DialogFragment {
         builder.setPositiveButton(getString(R.string.listen_spot), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                mListener.onDialogClick();
                 Uri uri = Uri.parse(url);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
