@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements AnswerDialogFragment.DialogEventClickListener {
+public class MainActivity extends AppCompatActivity implements AnswerDialogFragment.DialogEventClickListener, GameOverDialogFragment.GameOverClickListener {
 private static final String TAG = "GuessThatName";
 private static final String DIALOG_TAG = "dialog";
 private static final String GAME_OVER_TAG = "gameoverman";
@@ -433,17 +433,27 @@ private int questionNumber;
     @Override
     public void onDialogClick() {
         questionNumber++;
-        if(questionNumber < 10 && questionNumber < mTracks.size()) {
+        if(questionNumber < 1 && questionNumber < mTracks.size()) {
             chooseTracks();
         }else{
+            //display game over message
             DialogFragment dialogFragment = new GameOverDialogFragment();
             Bundle args = new Bundle();
             args.putInt(getString(R.string.score_arg),score);
             args.putInt(getString(R.string.max_score_arg),maxScore);
             dialogFragment.setArguments(args);
             dialogFragment.show(mFragmentManager,GAME_OVER_TAG);
-
-            //start new game
         }
+    }
+
+    @Override
+    public void startNewGame() {
+        //start new game
+        score = 0;
+        maxScore = 0;
+        used = new ArrayList<Integer>();
+        questionNumber = 0;
+        mGameViewModel.loadPlaylist();
+        chooseTracks();
     }
 }
