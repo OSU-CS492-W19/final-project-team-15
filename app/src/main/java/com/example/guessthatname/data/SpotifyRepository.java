@@ -26,9 +26,9 @@ public class SpotifyRepository implements SpotifyUtil.GetCategory.AsyncCallback,
     }
 
     public void clearRepository() {
-        category.postValue(null);
-        playlist.postValue(null);
-        tracks.postValue(null);
+        category.setValue(null);
+        playlist.setValue(null);
+        tracks.setValue(null);
         loadingStatus.setValue(Status.SUCCESS);
     }
 
@@ -37,18 +37,22 @@ public class SpotifyRepository implements SpotifyUtil.GetCategory.AsyncCallback,
         //Is category cached?
         loadingStatus.setValue(Status.LOADING);
         if(category.getValue() == null) {
+            Log.d("SpotifyUtil", "executing task");
             new SpotifyUtil.GetCategory(genre_key, this).execute();
         } else {
+            Log.d("SpotifyUtil", "Loading playlist");
             loadPlaylist();
         }
     }
     public void loadPlaylist(){
         //Is playlist cached?
+        Log.d("SpotifyUtil", "LoadPlaylists called");
         if(playlist.getValue() == null){
             String url = category.getValue().href;
             Log.d("SpotifyUtil", "Loaded Category: " + category.getValue().name);
             new SpotifyUtil.GetCategoriesPlaylist(url, this).execute();
         } else {
+            Log.d("SpotifyUtil", "Using old playlist");
             loadTracks();
         }
     }
@@ -77,20 +81,20 @@ public class SpotifyRepository implements SpotifyUtil.GetCategory.AsyncCallback,
 
     @Override
     public void onCategoryLoadFinished(SpotifyUtil.Category category) {
-        this.category.postValue(category);
+        this.category.setValue(category);
     }
 
     @Override
     public void onPlayListListLoadFinished(SpotifyUtil.PlayListList playlistList){
         Random rand = new Random(System.currentTimeMillis());
         int index = rand.nextInt(playlistList.playlists.items.size() - 1);
-        this.playlist.postValue(playlistList.playlists.items.get(index));
+        this.playlist.setValue(playlistList.playlists.items.get(index));
     }
 
     @Override
     public void onPlayListTracksLoadFinished(SpotifyUtil.PlayListTracks tracks){
         loadingStatus.setValue(Status.SUCCESS);
-        this.tracks.postValue(tracks.items);
+        this.tracks.setValue(tracks.items);
     }
 
 }

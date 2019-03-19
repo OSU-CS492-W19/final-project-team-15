@@ -141,21 +141,26 @@ private int questionNumber;
         mGameViewModel.getCategory().observe(this, new Observer<SpotifyUtil.Category>() {
             @Override
             public void onChanged(@Nullable SpotifyUtil.Category category) {
-                Log.d("DEBUG", "CATEGORY HAS CHANGED");
-                mGameViewModel.loadPlaylist();
+                if(category != null) {
+                    Log.d("DEBUG", "MainActivity: onChanged category: " + category.name);
+                    mGameViewModel.loadPlaylist();
+                }
             }
         });
         mGameViewModel.getPlaylist().observe(this, new Observer<SpotifyUtil.Playlist>() {
             @Override
             public void onChanged(@Nullable SpotifyUtil.Playlist playlist) {
-                mGameViewModel.loadTracks();
+                if(playlist != null)
+                    mGameViewModel.loadTracks();
             }
         });
         mGameViewModel.getTracks().observe(this, new Observer<ArrayList<SpotifyUtil.PlayListTrack>>() {
             @Override
             public void onChanged(@Nullable ArrayList<SpotifyUtil.PlayListTrack> tracks) {
-                mTracks = tracks;
-                startGame();
+                if(tracks != null) {
+                    mTracks = tracks;
+                    startGame();
+                }
             }
         });
 
@@ -180,6 +185,7 @@ private int questionNumber;
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 mGameViewModel.clearRepository();
                 mGameViewModel.loadCategory(mPreferences.getString("genre_key", "toplists"));
+
             }
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
