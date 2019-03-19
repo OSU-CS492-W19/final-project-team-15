@@ -450,6 +450,7 @@ private int questionNumber;
     public void startNewGame() {
         //start new game
         score = 0;
+        mScoreTV.setText(getString(R.string.score_pre)+" "+score);
         maxScore = 0;
         used = new ArrayList<Integer>();
         questionNumber = 0;
